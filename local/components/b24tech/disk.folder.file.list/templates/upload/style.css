@@ -1,0 +1,16 @@
+.webform-button-upload {
+	width: 100%;
+	text-align: center;
+}
+
+.wduf-uploader {
+	font-size: 14px;
+	background: #f1f1f2;
+    border: 1px dashed;
+}
+#js-file-list {
+	margin-top: 10px;
+}
+.webform-field-upload {
+	margin-top: 10px;
+}

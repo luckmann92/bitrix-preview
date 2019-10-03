@@ -1,0 +1,508 @@
+<?php
+if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+
+\Bitrix\Main\Loader::includeModule('iblock');
+\Bitrix\Main\Loader::includeModule('highloadblock');
+\Bitrix\Main\Loader::includeModule('im');
+
+class VotingComponent extends CBitrixComponent
+{
+	protected $iblock_id = 30;
+	protected $answersHL = 2;
+	protected $allMembers = array();
+	protected $mode = 'online';
+
+	public function executeComponent()
+	{
+		if($this->arParams["MEETING_ID"] > 0 && $this->arParams["INSTANCE_ID"] > 0) {
+			global $USER;
+			$userId = $USER->GetId();
+
+			$userRole = $this->getUserRole($userId, $this->arParams["MEETING_ID"]);
+
+			if($userRole == null) {
+				$this->includeComponentTemplate('result');
+				return;
+			}
+
+			$instanceId = $this->arParams["INSTANCE_ID"];
+			if($this->arParams["IS_QUESTION"] == "Y") {
+				$instanceId = $this->arParams["INSTANCE_PARENT_ID"];
+			}
+			$voting = $this->getVoiting($this->arParams["MEETING_ID"], $instanceId);
+
+			$this->arResult["VOTING"] = $voting;
+			$this->arResult["USER_ID"] = $userId;
+			$this->arResult["MEETING_ID"] = $this->arParams["MEETING_ID"];
+			$this->arResult["SECTION_ID"] = $voting["ID"];
+
+			if(($userRole == 'K' || $userRole == 'O') && $voting['UF_STATUS'] == 'FINISHED') {
+				$this->includeComponentTemplate('finished');
+				return;
+			}
+
+			if($userRole == 'O' && $voting['UF_STATUS'] == 'AGREEMENT') {
+				$this->includeComponentTemplate('agreement');
+				return;
+			}
+
+			if($voting['UF_STATUS'] == 'IN_PROCESS' && ($userRole == 'M')) {
+				$questions = $this->getVoitingQuestions($voting["ID"]);
+				$questions = $this->detectUnansweredQuestions($userId, $voting["ID"], $questions);
+
+				if(count($questions) > 0) {
+					if($this->arParams["IS_QUESTION"] == "Y") {
+						$this->arResult["QUESTIONS"] = array_filter($questions, function($item){ return $item['PROPERTY_ID_INSTANCE_VALUE'] == $this->arParams['INSTANCE_ID']; });
+					} else {
+						$this->arResult["QUESTIONS"] = $questions;
+					}
+					
+
+					$this->includeComponentTemplate();
+					return;
+				} else {
+					$this->includeComponentTemplate('result');
+					return;
+				}
+			}
+
+			if($voting['UF_STATUS'] == 'IN_PROCESS' && ($userRole == 'K' || $userRole == 'O') && $voting['UF_TYPE'] == 'offline') {
+				$questions = $this->getVoitingQuestions($voting["ID"]);
+				//$questions = $this->detectUnansweredQuestions($userId, $voting["ID"], $questions);
+
+				if(count($questions) > 0) {
+					if($this->arParams["IS_QUESTION"] == "Y") {
+						$this->arResult["QUESTIONS"] = array_filter($questions, function($item){ return $item['PROPERTY_ID_INSTANCE_VALUE'] == $this->arParams['INSTANCE_ID']; });
+					} else {
+						$this->arResult["QUESTIONS"] = $questions;
+					}
+					
+					$ids = $this->getMembers($this->arParams["MEETING_ID"]);
+					
+					$this->arResult['MEMBERS'] = $this->getUsersByIds($ids);
+
+					$this->includeComponentTemplate('offline');
+					return;
+				} else {
+					$this->includeComponentTemplate('result');
+					return;
+				}
+			}
+
+			$this->includeComponentTemplate('result');
+		}
+
+		if($this->arParams['ACTION'] == 'save') {
+			$this->saveAnswers($this->arParams['USER_ID'], $this->arParams['ANSWERS']);
+			
+			$questions = $this->getVoitingQuestions($this->arParams['SECTION_ID']);
+			if($this->isFinishVoting($this->arParams['MEETING_ID'], $this->arParams['SECTION_ID'], $questions)) {
+				$this->finishVoting($this->arParams['MEETING_ID'], $this->arParams['SECTION_ID']);
+			}
+		}
+
+		if($this->arParams['ACTION'] == 'agreement') {
+			$this->agreementVoting($this->arParams['MEETING_ID'], $this->arParams['SECTION_ID']);
+		}
+
+		if($this->arParams['ACTION'] == 'close') {
+			$this->closeVoting($this->arParams['MEETING_ID'], $this->arParams['SECTION_ID']);
+		}
+
+		if($this->arParams['ACTION'] === 'create' && !empty($this->arParams['PARENT_QUESTION_ID']))
+		{
+			$this->mode = $this->arParams['TYPE_VOTING'];
+			if($parentInstance = $this->getParentInstance($this->arParams['PARENT_QUESTION_ID'])) {
+				$instances = $this->getInstances($parentInstance);
+				if(!empty($instances['CHILD'])) {
+					$this->createNewVoiting($instances['PARENT'], $instances['CHILD']);
+				}
+			}
+			
+		}
+	}
+
+	protected function getUsersByIds($ids)
+	{
+		$users = array();
+		$rsUsers = CUser::GetList(($by="id"), ($order="asc"), array("ID"=>implode('|', $ids))); 
+
+		while($arUser = $rsUsers->Fetch()) {
+			$users[$arUser['ID']] = $arUser['NAME'].' '.$arUser['LAST_NAME'];
+		}
+
+		return $users;
+	}
+
+	protected function getUserRole($userId, $meetingId)
+	{
+		$members = $this->getAllMeetingMembers($meetingId);
+		if(isset($members[$userId])) {
+			return $members[$userId];
+		}
+		return null;
+	}
+
+	protected function getMembers($meetingId)
+	{
+		$menbers = $this->getAllMeetingMembers($meetingId);
+		
+		return array_keys(array_filter($menbers, function($v) {
+		    return $v == 'M';
+		}));
+	}
+
+	protected function getOrganizer($meetingId)
+	{
+		$menbers = $this->getAllMeetingMembers($meetingId);
+		
+		return array_keys(array_filter($menbers, function($v) {
+		    return $v == 'O';
+		}));
+	}
+
+	protected function getSecretary($meetingId)
+	{
+		$menbers = $this->getAllMeetingMembers($meetingId);
+		
+		return array_keys(array_filter($menbers, function($v) {
+		    return $v == 'K';
+		}));
+	}
+
+	protected function getAllMeetingMembers($meetingId)
+	{
+		if(!empty($this->allMembers)) {
+			return $this->allMembers;
+		}
+
+		$this->allMembers = CMeeting::GetUsers($meetingId);
+		return $this->allMembers;
+	}
+
+	protected function getVoiting($meetingId, $instanceId)
+	{
+		$db_list = CIBlockSection::GetList(Array("ID"=>"DESC"), array(
+				"ACTIVE" => "Y",
+				"IBLOCK_ID" => $this->iblock_id,
+				"UF_MEETING_ID" => $meetingId,
+				"UF_ID_INSTANCE" => $instanceId,
+				//"UF_STATUS" => "IN_PROCESS"
+			),
+			false,
+			array("ID", "IBLOCK_ID", "NAME", "UF_*")
+		);
+		
+		if($ar_result = $db_list->Fetch()) {
+			return $ar_result;
+		}
+		
+		return null;
+	}
+
+	protected function getVoitingById($id)
+	{
+		$db_list = CIBlockSection::GetList(Array("ID"=>"DESC"), array(
+				"ACTIVE" => "Y",
+				"IBLOCK_ID" => $this->iblock_id,
+				"ID" => $id,
+			),
+			false,
+			array("ID", "IBLOCK_ID", "NAME", "UF_*")
+		);
+		
+		if($ar_result = $db_list->Fetch()) {
+			return $ar_result;
+		}
+		
+		return null;
+	}
+
+	protected function updateVoitingStatus($id, $status)
+	{
+		$bs = new CIBlockSection;
+		return $bs->Update($id, array('UF_STATUS' => $status));
+	}
+
+	protected function getVoitingQuestions($sectionId)
+	{
+		$questions = array();
+		$arFilter = Array("IBLOCK_ID"=>IntVal($yvalue), "ACTIVE_DATE"=>"Y", "ACTIVE"=>"Y");
+		$res = CIBlockElement::GetList(Array('ID'=>'ASC'), array(
+				"ACTIVE" => "Y",
+				"IBLOCK_ID" => $this->iblock_id,
+				"IBLOCK_SECTION_ID" =>$sectionId
+			), 
+			false, 
+			false, 
+			array("ID", "NAME", "IBLOCK_ID", "IBLOCK_SECTION_ID", "PROPERTY_ID_INSTANCE", "PROPERTY_MEETING_ID", "PROPERTY_INSTANCE_PARENT_ID")
+		);
+
+		while($ob = $res->Fetch())
+		{
+		 	$questions[] = $ob;
+		}
+
+		return $questions;
+	}
+
+	protected function saveAnswers($userId, $answers)
+	{
+		if(!($userId > 0) || empty($answers)) {
+			header('Content-Type: application/json');
+			echo json_encode(array("success"=>false));
+		}
+
+		foreach($answers as $answer) {
+			$this->saveAnswerToHL($userId, $answer);
+		}
+
+		header('Content-Type: application/json');
+		echo json_encode(array("success"=>true));
+	}
+
+	protected function saveAnswerToHL($userId, $answers) 
+	{
+		$user = CUser::GetByID($userId)->Fetch();
+
+		$arFields = array(
+            'UF_ID_INSTANCE' => $answers['instance'],
+            'UF_PARENT_INSTANCE' => $answers['parent_instance'],
+            'UF_MEETING_ID' => $answers['meeting'],
+            'UF_IBLOCK_ELEMENT_ID' => $answers['id'],
+            'UF_SECTION_ID' => $answers['section'],
+            'UF_USER_ID' => $userId,
+            'UF_USER_TITLE' => $user['NAME'].' '.$user['LAST_NAME'],
+            'UF_ANSWER_TITLE' => $answers['title'],
+            'UF_VALUE' => $answers['value'],
+            
+            'UF_DATE_CREATE' => new \Bitrix\Main\Type\DateTime
+        );
+
+        $arHLBlock = \Bitrix\Highloadblock\HighloadBlockTable::getById($this->answersHL)->fetch();
+	    $obEntity = \Bitrix\Highloadblock\HighloadBlockTable::compileEntity($arHLBlock);
+	    $strEntityDataClass = $obEntity->getDataClass();
+
+	    $obResult = $strEntityDataClass::add($arFields);
+	      
+	    return $bSuccess = $obResult->isSuccess();
+	}
+
+	protected function detectUnansweredQuestions($userId, $sectionId, $questions) 
+	{
+		$unansweredQuestions = array();
+		$answers = $this->getAnswers($userId, $sectionId);
+
+		foreach($questions as $question) {
+			if(!isset($answers[$userId][$question['ID']])) {
+				$unansweredQuestions[] = $question;
+			}
+		}
+
+		return $unansweredQuestions;
+	}
+
+	protected function getAnswers($userId, $sectionId) 
+	{
+		$answers = array();
+
+		$arHLBlock = \Bitrix\Highloadblock\HighloadBlockTable::getById($this->answersHL)->fetch();
+	    $obEntity = \Bitrix\Highloadblock\HighloadBlockTable::compileEntity($arHLBlock);
+	    $strEntityDataClass = $obEntity->getDataClass();
+
+	    $filter = array(
+	    	'UF_USER_ID' => $userId, 
+	    	'UF_SECTION_ID'=> $sectionId,
+	    );
+	    
+	    $rsData = $strEntityDataClass::getList(array(
+	       'order' => array('ID' => 'ASC'),
+	       'filter' => $filter,
+	    ));
+
+	    while($arItem = $rsData->Fetch()) {
+	       $answers[$arItem['UF_USER_ID']][$arItem['UF_IBLOCK_ELEMENT_ID']] = $arItem;
+	    }
+
+	    return $answers;
+	}
+
+	protected function isFinishVoting($meetingId, $sectionId, $questions)
+	{
+		$members = $this->getMembers($meetingId);
+		$answers = $this->getAnswers($members, $sectionId);
+
+		foreach($members as $member) {
+
+			$unansweredQuestions = array();
+			foreach($questions as $question) {
+				if(!isset($answers[$member][$question['ID']])) {
+					$unansweredQuestions[] = $question;
+				}
+			}
+
+			if(!empty($unansweredQuestions)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	protected function finishVoting($meetingId, $sectionId)
+	{
+		if($this->updateVoitingStatus($sectionId, 'FINISHED')) {
+			$secretaries = $this->getSecretary($meetingId);
+			$voting = $this->getVoitingById($sectionId);
+			$mess = 'Голосование по вопросу "'.$voting['NAME'].'" завершено. Необходимо подтвердить [URL=/timeman/meeting/item/'.$voting['UF_ITEM_ID'].'/?from='.$voting['UF_MEETING_ID'].']результат[/URL]';
+			foreach($secretaries as $id) {
+				$this->sendNotify($id, $mess);
+			}
+		}
+	}
+
+	protected function agreementVoting($meetingId, $sectionId)
+	{
+		header('Content-Type: application/json'); 
+
+		if($this->updateVoitingStatus($sectionId, 'AGREEMENT')) {
+			$organizers = $this->getOrganizer($meetingId);
+			$voting = $this->getVoitingById($sectionId);
+			$mess = 'Голосование по вопросу "'.$voting['NAME'].'" завершено. Необходимо ознакомится с [URL=/timeman/meeting/item/'.$voting['UF_ITEM_ID'].'/?from='.$voting['UF_MEETING_ID'].']результатами голосования[/URL]';
+			foreach($organizers as $id) {
+				$this->sendNotify($id, $mess);
+			}
+
+			$members = $this->getMembers($meetingId);
+			$mess = 'Голосование по вопросу "'.$voting['NAME'].'" завершено. С результатами ознакомится можно [URL=/timeman/meeting/item/'.$voting['UF_ITEM_ID'].'/?from='.$voting['UF_MEETING_ID'].']здесь[/URL]';
+			foreach($members as $id) {
+				$this->sendNotify($id, $mess);
+			}
+
+			echo json_encode(array("success"=>true));
+			return;	
+		}	
+		echo json_encode(array("success"=>false));
+	}
+
+	protected function closeVoting($meetingId, $sectionId)
+	{
+		header('Content-Type: application/json');
+
+		if($this->updateVoitingStatus($sectionId, 'CLOSE')) {
+			echo json_encode(array("success"=>true));
+			return;	
+		}	
+		echo json_encode(array("success"=>false));
+	}
+
+	protected function createNewVoiting($parentInstance, $childInstances)
+	{
+		$section = $this->createSection($parentInstance, $this->arParams['TYPE_VOTING']);
+		if($section > 0) {
+			foreach($childInstances as $item) {
+				$this->createElement($section, $item);
+			}
+		}
+
+		if($this->mode == 'online') {
+			$members = $this->getMembers($parentInstance["MEETING_ID"]);
+			$mess = 'Голосование по вопросу "'.$parentInstance['TITLE'].'" началось. Необходимо проголосовать на [URL=/timeman/meeting/item/'.$parentInstance['ITEM_ID'].'/?from='.$parentInstance['MEETING_ID'].']странице[/URL]';
+			foreach($members as $id) {
+				$this->sendNotify($id, $mess);
+			}
+		}
+
+
+		header('Content-Type: application/json');
+		echo json_encode(array("success"=>true));
+	}
+
+	protected function createSection($instance, $type) 
+	{
+		if(strlen($type) == 0) {
+			$type = 'online';
+		}
+
+		$bs = new CIBlockSection;
+		$arFields = Array(
+		  "ACTIVE" => "Y",
+		  "IBLOCK_ID" => $this->iblock_id,
+		  "NAME" => $instance['TITLE'],
+		  "UF_ID_INSTANCE" => $instance['ID'],
+		  "UF_ITEM_ID" => $instance['ITEM_ID'],
+		  "UF_TYPE" => $type, 
+		  "UF_STATUS" => "IN_PROCESS",
+		  "UF_MEETING_ID" => $instance["MEETING_ID"],
+		  ); 
+
+		if ($ID = $bs->Add($arFields)) {
+		  return $ID;
+		}
+
+		return 0;
+	}
+
+	protected function createElement($section, $instance) 
+	{
+		$el = new CIBlockElement;
+		global $USER;
+
+		$arLoadProductArray = Array(
+		  "MODIFIED_BY"    => $USER->GetID(), // элемент изменен текущим пользователем
+		  "IBLOCK_SECTION_ID" => $section,          // элемент лежит в корне раздела
+		  "IBLOCK_ID"      => $this->iblock_id,
+		  "NAME"           => $instance['TITLE'],
+		  "ACTIVE"         => "Y",
+		  "PROPERTY_VALUES" => array(
+		  	'ID_INSTANCE' => $instance["ID"],
+		  	'MEETING_ID' => $instance["MEETING_ID"],
+		  	'INSTANCE_PARENT_ID' => $instance["INSTANCE_PARENT_ID"],
+		  )
+		);
+
+		if($PRODUCT_ID = $el->Add($arLoadProductArray)) {
+			return $PRODUCT_ID;
+		}
+		
+		return 0;
+	}
+
+	protected function getInstances($parentInstance) 
+	{
+		$instances = array(
+			"PARENT" => array(),
+			"CHILD" => array()
+		);
+		if($parentInstance['MEETING_ID'] > 0) {
+			$res = CMeeting::GetItems($parentInstance['MEETING_ID']);
+			while ($item = $res->Fetch()) {
+				if($item["INSTANCE_PARENT_ID"] == $parentInstance['ID']) {
+					$instances["CHILD"][] = $item;
+				}
+				if($item["ID"] == $parentInstance['ID']) {
+					$instances['PARENT'] = $item;
+				}
+			}
+		}
+
+		return $instances;
+	}
+
+	protected function getParentInstance($parentQuestionId) 
+	{
+		return CMeetingInstance::GetList(array(), array("ID" => $parentQuestionId))->Fetch();
+	}
+
+	protected function sendNotify($to, $mess) 
+	{
+		$arMessageFields = array(
+		    "TO_USER_ID" => $to,
+		    //"FROM_USER_ID" => 2,
+		    "NOTIFY_TYPE" => IM_NOTIFY_SYSTEM,
+		    "MESSAGE" => $mess,
+		    //"ATTACH" => Array($attach)
+		);
+		$mess = CIMNotify::Add($arMessageFields);
+	}
+}

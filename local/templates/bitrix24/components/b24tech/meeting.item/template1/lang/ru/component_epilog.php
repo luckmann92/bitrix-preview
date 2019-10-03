@@ -1,0 +1,3 @@
+<?
+$MESS['MEETING_ITEM_PAGE_TITLE_PARENT'] = 'Вопрос';
+$MESS['MEETING_ITEM_PAGE_TITLE_CHILD'] = 'Проект Решения';

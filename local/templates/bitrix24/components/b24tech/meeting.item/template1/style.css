@@ -1,0 +1,80 @@
+#switch_download.meeting-tab-active {
+	background-color: #73b461;
+    background-image: none;
+    border-radius: 2px;
+    overflow: hidden;
+}
+.meeting-detail-agenda-download-active .meeting-agenda-protocol-visible,
+.meeting-detail-agenda-download-active .meeting-agenda-agenda-visible,
+.meeting-detail-agenda-download-active #agenda_blocks,
+.meeting-agenda-download-visible {
+	display: none;
+}
+.meeting-detail-agenda-download-active .meeting-agenda-download-visible {
+	display: block;
+}
+.meeting-agenda-download-visible .meeting-ag-block-cont-wrap {
+	margin: 0 0 ;
+}
+.meeting-agends-download-item-link {
+	margin: 0 0 0 5px;
+}
+
+.crm-list-stage-cell {width:400px;}
+
+div.crm-list-stage-bar {
+	background:#fff;
+	border:1px solid #cdd0d3;
+	border-radius:2px;
+	height:8px;
+	min-width: 170px;
+	max-width:350px;
+	position:relative;
+	margin-top: 3px;
+}
+
+.crm-lead-header-header div.crm-list-stage-bar {
+	min-width: 100px;
+}
+
+table.crm-feed-info-table td.crm-feed-info-right-cell div.crm-list-stage-bar {
+	max-width:240px;
+	min-width:240px;
+	width: 240px;
+}
+
+.crm-list-stage-bar .crm-list-stage-cell {margin-top:-7px;}
+
+.crm-list-stage-bar-title {
+	color:#a5a9ab;
+	font-size:11px;
+	padding:3px 0 0 1px;
+	line-height:14px !important;
+}
+
+table.crm-list-stage-bar-table {
+	border-spacing:0;
+	height:8px;
+	width:100%;
+}
+
+table.crm-list-stage-bar-table td.crm-list-stage-bar-part
+{
+	border-bottom-style: none !important;
+	border-left:1px solid rgba(0,0,0,.1);
+	padding:0 !important;
+	width:20px !important;
+}
+
+.list-stage-bar-label {
+	vertical-align: top;
+}
+.table-satatus-bar-in-edit-view {
+	float: right;
+    margin-left: 10px;
+    vertical-align: top;
+}
+
+.table-satatus-bar-in-edit-view td {
+	vertical-align: top;
+}

@@ -1,0 +1,32 @@
+.form-questions {
+	color: #545c6a;
+}
+.question-title {
+	font-weight: bold;
+	margin-bottom: 5px;
+}
+.form-check {
+	display: inline-block;
+}
+.question-row {
+	margin-bottom: 10px;
+	border-bottom: 1px #eef2f4 solid;
+    padding-bottom: 10px;
+}
+.member-select {
+	background: #ffffff;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 300px;
+}
+.js-messages {
+	padding: 5px;
+	background: #90ee90;
+	display: none;
+	margin-bottom: 10px;
+	color: #545c6a;
+	/*width: 282px;*/
+}
+.result-grid.edit-form {
+	display: none;
+}
