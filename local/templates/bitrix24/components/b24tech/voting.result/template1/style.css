@@ -35,7 +35,11 @@
 	border-bottom: 1px #535c69 solid;
 	/*display: flex;*/
 }
-
+.head-item.order-item,
+.body-item.order-item {
+	min-width:150px;
+	width:150px;
+}
 .result-grid .row.parent {
 	background: #e6e6e6;
 	color: #545c6a;
