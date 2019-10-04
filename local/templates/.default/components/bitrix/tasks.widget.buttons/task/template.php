@@ -72,7 +72,11 @@ $taskData = $arParams["TASK"];
 			<?=Loc::getMessage("TASKS_PAUSE_TASK_TIMER")?>
 		</span><?
 
-		?><span data-bx-id="task-view-b-button" data-action="START" class="task-view-button start ui-btn ui-btn-success"<? if ($styleHide) {echo $styleHide;} ?>>
+		?>
+        <span data-bx-id="task-view-b-button" 
+              <?/*data-action="START" */?>
+              data-action="COMPLETE"
+              class="task-view-button start ui-btn ui-btn-success"<? if ($styleHide) {echo $styleHide;} ?>>
 			<?=Loc::getMessage("TASKS_START_TASK")?>
 		</span><?
 

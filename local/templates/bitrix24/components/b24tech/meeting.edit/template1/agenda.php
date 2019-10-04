@@ -914,7 +914,8 @@ endif;
         ?>
 //edit buttons data.INSTANCE_PARENT_ID
         //console.log(data);
-        if ((data.STATUS || data.STATUS != 'FINISHED') && checkAccess != 'M') {
+       // if ((data.STATUS || data.STATUS != 'FINISHED') && (currentState !== 'C' && checkAccess !== 'O')) {
+        if ((currentState === 'P' && checkAccess !== 'K') || (currentState !== 'C' && checkAccess !== 'O')) {
             h += '<div class="meeting-ag-edit-block">' +
                 '<div class="meeting-ag-edit-bl-cont">' +
                 '<div class="meeting-ag-edit-close" onmousedown="BX.PreventDefault(arguments[0])" onclick="deleteRow(\'' + key + '\', BX.findParent(this, window.listItemParams.isItem));" title="<?=CUtil::JSEscape(htmlspecialcharsbx(GetMessage('ME_AGENDA_TT_DELETE')))?>"></div>' +
