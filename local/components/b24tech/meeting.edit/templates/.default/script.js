@@ -159,7 +159,7 @@ function saveData(bTimeout)
 
 		if (!bTimeout)
 		{
-			window.saveTimer = setTimeout("saveData(true)", 1000);
+			window.saveTimer = setTimeout("saveData(true)", 500);
 		}
 		else
 		{

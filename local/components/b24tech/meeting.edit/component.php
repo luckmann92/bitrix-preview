@@ -1,5 +1,4 @@
 <?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
-
 if (!CModule::IncludeModule("meeting"))
 	return ShowError(GetMessage("ME_MODULE_NOT_INSTALLED"));
 
@@ -215,11 +214,12 @@ else if ($arParams['MEETING_ID'] <= 0)
     $arOwner = CUser::GetByID($USER->GetID())->GetNext();
 }
 
-//if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_REQUEST['save']) && $arResult['CAN_EDIT'] && check_bitrix_sessid())
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_REQUEST['save']) && check_bitrix_sessid())
+if (isset($_REQUEST['save']) && !$arResult['CAN_EDIT']) {
+    $APPLICATION->RestartBuffer();
+    die();
+}
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_REQUEST['save']) && $arResult['CAN_EDIT'] && check_bitrix_sessid())
 {
-    $json = array();
-
 	$bFromEditForm = $_POST['edit'] == 'Y';
 	$arParams['COPY'] = $_POST['COPY'] == 'Y';
 
@@ -324,7 +324,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_REQUEST['save']) && check_bi
 		CMeeting::Update($MEETING_ID, $arFields);
 	}
 
-
 	if ($res)
 	{
 		$arEventParams = null;
@@ -425,7 +424,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_REQUEST['save']) && check_bi
 			if(!empty($_FILES['FILES_MEETING'])) {
 				foreach ($_FILES['FILES_MEETING']as $code => $values) {
 					foreach ($values as $key => $val) {
-					    if ($val) {
+                        if ($val) {
                             $files[$key][$code] = $val;
                         }
 					}
@@ -440,10 +439,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_REQUEST['save']) && check_bi
 
 		$arAgenda = $_REQUEST['AGENDA'];
 		$bDeleted = false;
-
 		if (is_array($arAgenda))
 		{
-            $arNewAgendaMap = array();
+			$arNewAgendaMap = array();
 			$arNewAgendaTasks = array();
 
 			if (isset($_REQUEST['AGENDA_TASK']) && CModule::IncludeModule('tasks'))
@@ -623,7 +621,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_REQUEST['save']) && check_bi
 
 				if ($bNew)
 				{
-
 					if (!$arFields['ITEM_ID'])
 					{
 						$arFields['ITEM_ID'] = CMeetingItem::Add($arFields, true);
@@ -633,52 +630,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_REQUEST['save']) && check_bi
 					{
 						$INSTANCE_ID = CMeetingInstance::Add($arFields);
 					}
-					$arNewAgendaMap[$key] = array($INSTANCE_ID, $arFields['ITEM_ID']);
+					//$arNewAgendaMap[$key] = array($INSTANCE_ID, $arFields['ITEM_ID']);
+					$arNewAgendaMap[$key] = array($INSTANCE_ID, $INSTANCE_ID);
 
-                    $json[$key] = array(
-                        'key' => $key,
-                        'id' => $INSTANCE_ID,
-                        'item' => $arFields['ITEM_ID'],
-                        'parent' => $arFields['INSTANCE_PARENT_ID']
-                    );
-
-					//удаление результатов голосования в момент проведения и добавления нового проекта решения
-                    if ($arResult['MEETING']['CURRENT_STATE'] == 'A' && $arFields['INSTANCE_PARENT_ID'] > 0) {
-                        clearVotingResult($MEETING_ID, array(
-                            'UF_PARENT_INSTANCE' => $arFields['INSTANCE_PARENT_ID'],
-                            'UF_MEETING_ID' => $arFields['MEETING_ID']
-                        ));
-                    }
+					// clear voting result
+					if($MEETING_ID > 0) {
+						// init.php
+						clearVotingResult($MEETING_ID);
+					}
 				}
 				else
 				{
-                    $json[$key] = array(
-                        'key' => $key,
-                        'id' => $key,
-                        'item' => $arFields['ITEM_ID'],
-                        'parent' => $arFields['INSTANCE_PARENT_ID']
-                    );
 					if ($arFields['TITLE'])
 					{
-                        $arMeetingItem = CMeetingItem::GetList(
-					            array(),
-                                array('ID' => $arFields['ITEM_ID']),
-                                false,
-                                false
-                        )->Fetch();
-
-					    if ($arMeetingItem['TITLE'] != $arFields['TITLE']) {
-					        $arFilter = array(
-                                'UF_PARENT_INSTANCE' => $arFields['INSTANCE_PARENT_ID'] ?: $key,
-                                'UF_MEETING_ID' => $arFields['MEETING_ID'],
-                            );
-					        if ($arFields['INSTANCE_PARENT_ID']) {
-                                $arFilter['UF_ID_INSTANCE'] = $key;
-                            }
-
-                            clearVotingResult($MEETING_ID, $arFilter);
-                        }
-
 						CMeetingItem::Update($arFields['ITEM_ID'], $arFields);
 					}
 
@@ -693,7 +657,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_REQUEST['save']) && check_bi
 					CMeetingItem::AddTask($arFields['ITEM_ID'], $arFields['TASK_ID']);
 				}
 			}
-
 		}
 
 		if ($bDeleted)
@@ -706,11 +669,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_REQUEST['save']) && check_bi
 			CMeeting::AddEvent($arEventParams[0], $arEventParams[1], $arEventParams[2]);
 		}
 
-		if (!empty($json) && !isset($_REQUEST['create_new'])) {
-		    $APPLICATION->RestartBuffer();
-		    echo json_encode($json);
-		    die();
-        } elseif ($_REQUEST['save_type'] == 'BGSAVE')
+		if ($_REQUEST['save_type'] == 'BGSAVE')
 		{
 			$APPLICATION->RestartBuffer();
 ?>
@@ -749,7 +708,6 @@ if (top.document.forms.meeting_edit)
 		}
 		else
 		{
-
 			LocalRedirect(str_replace('#MEETING_ID#', $MEETING_ID, $arParams["MEETING_URL_TPL"]));
 		}
 	}
@@ -822,7 +780,6 @@ if ($arParams['EDIT'] && $arResult['CAN_EDIT'] || isset($arResult["MEETING"]["PL
 if($arParams['EDIT'] && $arResult['CAN_EDIT'])
 {
 //    $arOwner = CUser::GetByID(array_search('O', $arResult['MEETING']['USERS']))->GetNext();
-
     $arResult['OWNER_FULL_NAME'] = $arOwner['NAME'] . ' ' . $arOwner['LAST_NAME'];
 	require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/tools/clock.php");
 	$this->IncludeComponentTemplate('tpl_edit');

@@ -184,62 +184,24 @@ function updateListNumbers() {
     listNumberCustom(window.listItemParams);
 }
 
-function saveData(bTimeout) {
-    if (!!window.BXMEETINGCANEDIT) {
+function saveData(bTimeout)
+{
+    if (!!window.BXMEETINGCANEDIT)
+    {
         if (window.saveTimer)
             clearTimeout(window.saveTimer);
 
-        if (!bTimeout) {
-            window.saveTimer = setTimeout("saveData(true)", 0);
-        } else {
-            var f = document.forms.meeting_edit;
-
+        if (!bTimeout)
+        {
+            window.saveTimer = setTimeout("saveData(true)", 1000);
+        }
+        else
+        {
+            var f = document.forms.meeting_edit
             if (f.MEETING_ID.value > 0)
             {
                 f.save_type.value = 'BGSAVE';
-                var data = BX.ajax.prepareData(BX.ajax.prepareForm(f).data);
-
-               // console.log(f.action);
-                BX.ajax({
-                    url: f.action,
-                    method: 'POST',
-                    data: data,
-                    onsuccess: function(response) {
-                        let obj = JSON.parse(response);
-
-                        jQuery.each( obj, function( key, value ) {
-                            let parent = value.id === 0 ? 0 : value.parent;
-
-                            $('#agenda_item_' + key).attr('id', '#agenda_item_' + value.id);
-
-                            $('[name="AGENDA[' + key + ']')
-                                .attr('name', 'AGENDA[' + value.id + ']')
-                                .attr('value', value.id);
-
-                            $('[name="AGENDA_TITLE[' + key + ']')
-                                .attr('name', 'AGENDA_TITLE[' + value.id + ']');
-
-                            $('[name="AGENDA_PARENT[' + key + ']')
-                                .attr('name', 'AGENDA_PARENT[' + value.id + ']')
-                                .attr('value', parent);
-
-                            $('[name="AGENDA_ORIGINAL[' + key + ']')
-                                .attr('name', 'AGENDA_ORIGINAL[' + value.id + ']');
-
-                            $('[name="AGENDA_TYPE[' + key + ']')
-                                .attr('name', 'AGENDA_TYPE[' + value.id + ']');
-
-                            $('[name="AGENDA_SORT[' + key + ']')
-                                .attr('name', 'AGENDA_SORT[' + value.id + ']');
-
-                            $('[name="AGENDA_ITEM[' + key + ']')
-                                .attr('name', 'AGENDA_ITEM[' + value.id + ']')
-                                .attr('value', value.item);
-                        });
-
-                    }
-                });
-
+                BX.ajax.submit(f);
                 setTimeout(function(){
                     f.save_type.value = 'SUBMIT';
                 }, 15);
