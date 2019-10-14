@@ -1187,3 +1187,26 @@ BX.namespace('Tasks.Component');
 	});
 
 }).call(this);
+
+
+var meeting_title = $('[name="ACTION[0][ARGUMENTS][data][UF_MEETING_SUBJECT]"]'),
+	params = window
+	.location
+	.search
+	.replace('?','')
+	.split('&')
+	.reduce(
+		function(p,e){
+			var a = e.split('=');
+			p[ decodeURIComponent(a[0])] = decodeURIComponent(a[1]);
+			return p;
+		},
+		{}
+	),
+	meeting_id = $('[data-item-value="119"]');
+
+if (meeting_title.length > 0) {
+	meeting_title.attr('value', params['MEETING_TITLE']);
+	meeting_id.append('<input type="hidden" name="ACTION[0][ARGUMENTS][data][UF_MEETING_ID]" value="' + params['MEETING_ID'] + '">');
+}
+

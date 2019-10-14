@@ -699,6 +699,7 @@ $this->EndViewTarget();
 		B24.updateCounters({"tasks_total": <?=(int)CUserCounter::GetValue($USER->GetID(), 'tasks_total')?>});
 	}
 </script>
+
 <?
 // if ($_REQUEST['dump'] == 'on') {
 // 	echo '<pre>';

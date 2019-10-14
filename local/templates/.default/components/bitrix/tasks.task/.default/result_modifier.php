@@ -14,6 +14,8 @@ use Bitrix\Tasks\Manager;
 use Bitrix\Tasks\Util\Type;
 use Bitrix\Tasks\Util\User;
 
+CJSCore::Init(array("jquery"));
+
 Loc::loadMessages(dirname(__FILE__).'/template.php');
 
 // js extension to be registered instead of script.js

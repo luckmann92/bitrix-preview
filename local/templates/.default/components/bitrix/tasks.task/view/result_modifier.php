@@ -11,6 +11,8 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 /** @var CBitrixComponentTemplate $this */
 /** @var TasksBaseComponent $component */
 
+CJSCore::Init(array("jquery"));
+
 Loc::loadMessages(dirname(__FILE__).'/template.php');
 $taskData = $arResult["DATA"]["TASK"];
 $can = $arResult["CAN"]["TASK"]["ACTION"];

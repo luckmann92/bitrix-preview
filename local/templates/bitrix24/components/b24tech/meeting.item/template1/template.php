@@ -441,7 +441,7 @@ if (CBXFeatures::IsFeatureEnabled('tasks') && IsModuleInstalled('tasks')):
         <div class="meeting-question-tasks-top">
             <span class="meeting-ques-title"><?= GetMessage("MI_TASKS") ?></span>
             <span class="meeting-link"
-                  onclick="AddQuickPopupTask(event, {'TITLE': '<?= $arResult['ITEM']['TITLE'] ?>'})"><?= GetMessage('MI_TASK_ADD') ?></span><span
+                  onclick="AddQuickPopupTask(event, {'TITLE': '<?= $arResult['ITEM']['TITLE'] ?>', 'MEETING_ID': '<?=$arResult['FROM_MEETING']?>', 'MEETING_TITLE': '<?=$arResult['ITEM']['INSTANCES'][0]['MEETING']['TITLE']?>'})"><?= GetMessage('MI_TASK_ADD') ?></span><span
                     class="meeting-link" onclick="showTaskSelector(this)"><?= GetMessage('MI_TASK_ATTACH') ?></span>
         </div>
     </div>
