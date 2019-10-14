@@ -800,7 +800,6 @@ endif;
             h += '<span class="meeting-ag-block-title-text">' + (data.TITLE || '<?=CUtil::JSEscape(GetMessage('ME_MEETING_TITLE_DEFAULT'))?>') + '</span>';
         }
 
-        //console.log(checkAccess);
         if (currentState === 'A') {
             <?if($allowedStart) {?>
             if (!data.INSTANCE_PARENT_ID && !data.STATUS) {
@@ -903,7 +902,7 @@ endif;
             // h += '<button type="button">Голосование</button>';
             h += '<span class="meeting-ag-report-lt"></span><span class="meeting-ag-report-rt"></span><span class="meeting-ag-report-lb"></span><span class="meeting-ag-report-rb"></span></span>';
         }
-        console.log('console: ' + <?=$arResult['CAN_EDIT']?>);
+
         h += '\
 </div>\
 <div id="js-file-list-wrap-' + data.ID + '"></div>\

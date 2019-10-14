@@ -88,30 +88,30 @@ function meetingAction(id, params) {
         onsuccess: function (response) {
             if (response['result'] === true) {
                 if (p.STATE === 'A') {
-                    startAllVotings(id, 'offline');
+                    if (startAllVotings(id, 'offline')) {
+                        location.reload();
+                    }
                 } else {
                     location.reload();
                 }
             }
         }
     });
-  //  BX.ajax.loadJSON('/local/components/b24tech/meeting.edit/ajax_meeting.php', p, meetingHandler);
-   //
 }
 
 function startAllVotings(meetingId, type) {
-
-    $.ajax({
+    BX.ajax({
         url: '/local/components/b24tech/voting.form/start.php',
         data: {
             meeting_id: meetingId,
             type: type,
             action: 'create_all'
         },
-        success: function (res) {
-           window.location.reload();
-
-        }.bind(this)
+        method: 'POST',
+        dataType: 'json',
+        onsuccess: function (response) {
+            return true;
+        }
     });
     return true;
 }
