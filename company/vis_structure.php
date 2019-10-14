@@ -5,12 +5,12 @@ $APPLICATION->SetTitle(GetMessage("COMPANY_TITLE"));
 $APPLICATION->AddChainItem(GetMessage("COMPANY_TITLE"), "vis_structure.php");
 ?>
 <?
-$APPLICATION->IncludeComponent("bitrix:intranet.structure.visual", ".default", array(
-	"DETAIL_URL" => "/company/structure.php?set_filter_structure=Y&structure_UF_DEPARTMENT=#ID#",
-	"PROFILE_URL" => "/company/personal/user/#ID#/",
-	"PM_URL" => "/company/personal/messages/chat/#ID#/",
-	"NAME_TEMPLATE" => "",
-	"USE_USER_LINK" => "Y"
+$APPLICATION->IncludeComponent("b24tech:intranet.structure.visual", ".default", Array(
+	"DETAIL_URL" => "/company/structure.php?set_filter_structure=Y&structure_UF_DEPARTMENT=#ID#",	// Страница структуры компании
+		"PROFILE_URL" => "/company/personal/user/#ID#/",	// Страница профиля пользователя
+		"PM_URL" => "/company/personal/messages/chat/#ID#/",	// Страница отправки личного сообщения
+		"NAME_TEMPLATE" => "",	// Отображение имени
+		"USE_USER_LINK" => "Y",	// Выводить всплывающие информационные карточки пользователей
 	),
 	false
 );
