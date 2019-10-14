@@ -154,7 +154,7 @@ if ($MEETING_ID > 0)
 			}
 
 			Header('Content-Type: application/json');
-			echo "{id: '".$MEETING_ID."', state: '".$arMeeting['CURRENT_STATE']."', date_start: '".MakeTimeStamp($arMeeting['DATE_START'])."000'}";
+			echo "{id: '".$MEETING_ID."', state: '".$arMeeting['CURRENT_STATE']."', date_start: '".MakeTimeStamp($arMeeting['DATE_START'])."000', result: true}";
 			//echo json_encode($json);
 		}
 	}

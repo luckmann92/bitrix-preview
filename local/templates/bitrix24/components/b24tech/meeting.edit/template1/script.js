@@ -80,8 +80,23 @@ function meetingAction(id, params) {
         p.STATE = params.state;
 
     p.sessid = BX.bitrix_sessid();
-    BX.ajax.loadJSON('/local/components/b24tech/meeting.edit/ajax_meeting.php', p, meetingHandler);
-    location.reload();
+    BX.ajax({
+        url: '/local/components/b24tech/meeting.edit/ajax_meeting.php',
+        data: p,
+        method: 'POST',
+        dataType: 'json',
+        onsuccess: function (response) {
+            if (response['result'] === true) {
+                if (p.STATE === 'A') {
+                    startAllVotings(id, 'offline');
+                } else {
+                    location.reload();
+                }
+            }
+        }
+    });
+  //  BX.ajax.loadJSON('/local/components/b24tech/meeting.edit/ajax_meeting.php', p, meetingHandler);
+   //
 }
 
 function startAllVotings(meetingId, type) {
@@ -94,9 +109,11 @@ function startAllVotings(meetingId, type) {
             action: 'create_all'
         },
         success: function (res) {
-            window.location.reload();
+           window.location.reload();
+
         }.bind(this)
     });
+    return true;
 }
 
 function meetingHandler(params) {

@@ -11,6 +11,7 @@ $APPLICATION->IncludeComponent(
 	"b24tech:voting.form", "", array(
 		"ACTION" => $_REQUEST['action'],
 		"PARENT_QUESTION_ID" => $_REQUEST['id'],
-		"TYPE_VOTING" => $_REQUEST['type'],		
+		"MEETING_ID" => $_REQUEST['meeting_id'],
+		"TYPE_VOTING" => $_REQUEST['type'],
 	)
 );
