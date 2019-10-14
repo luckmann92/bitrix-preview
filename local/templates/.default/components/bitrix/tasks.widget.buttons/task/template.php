@@ -73,7 +73,7 @@ $taskData = $arParams["TASK"];
 		</span><?
 
 		?>
-        <span data-bx-id="task-view-b-button" 
+        <span data-bx-id="task-view-b-button"
               <?/*data-action="START" */?>
               data-action="COMPLETE"
               class="task-view-button start ui-btn ui-btn-success"<? if ($styleHide) {echo $styleHide;} ?>>

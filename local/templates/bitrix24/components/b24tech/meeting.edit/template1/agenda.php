@@ -903,13 +903,15 @@ endif;
             // h += '<button type="button">Голосование</button>';
             h += '<span class="meeting-ag-report-lt"></span><span class="meeting-ag-report-rt"></span><span class="meeting-ag-report-lb"></span><span class="meeting-ag-report-rb"></span></span>';
         }
-
+        console.log('console: ' + <?=$arResult['CAN_EDIT']?>);
         h += '\
 </div>\
 <div id="js-file-list-wrap-' + data.ID + '"></div>\
 <div class="meeting-comments-wrap" id="agenda_item_comments_' + key + '" style="display: none;"><span onclick="toggleComments(null, this.parentNode);" class="meeting-hide-com meeting-dash-link"><?=CUtil::JSEscape(GetMessage('ME_AGENDA_HIDE_COMMENTS'))?></span><div></div></div></div></div></div>\
 <div class="meeting-ag-block-bottom"><div class="meeting-ag-block-bl"></div><div class="meeting-ag-block-br"></div></div>';
         <?
+
+
         if($arResult['CAN_EDIT']):
         ?>
 //edit buttons data.INSTANCE_PARENT_ID
