@@ -89,7 +89,9 @@ function meetingAction(id, params) {
             if (response['result'] === true) {
                 if (p.STATE === 'A') {
                     if (startAllVotings(id, 'offline')) {
-                        location.reload();
+                        setTimeout(function(){
+                            location.reload();
+                        }, 500);
                     }
                 } else {
                     location.reload();
@@ -109,9 +111,16 @@ function startAllVotings(meetingId, type) {
         },
         method: 'POST',
         dataType: 'json',
-        onsuccess: function (response) {
-            return true;
-        }
+        timeout: 30,
+        async: true,
+        processData: true,
+        scriptsRunFirst: true,
+        emulateOnload: true,
+        start: true,
+        cache: false,
+        onsuccess: function (data) {
+            console.log(data);
+        },
     });
     return true;
 }
