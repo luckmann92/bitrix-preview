@@ -20,6 +20,7 @@ CJSCore::Init(array("jquery"));
 ?>
 
 <?
+
 $APPLICATION->IncludeComponent(
 	"b24tech:voting.result", "", array(
 		"SECTION_ID" => $arResult["SECTION_ID"],		

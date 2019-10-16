@@ -26,7 +26,7 @@ $answers = array(
 <?if(!empty($arResult['QUESTIONS'])):?>
 	<? $rand = rand(); ?>
 	<div id="js-voting-<?=$rand?>" class="form-questions">
-		<input type="hidden" name="member" id="js-member-<?=$rand?>"value="<?=$arParams['USER_ID']?>" />
+		<input type="hidden" name="member" id="js-member-<?=$rand?>" value="<?=$arParams['USER_ID']?>" />
 		<div class="js-messages"></div>
 		<?foreach($arResult['QUESTIONS'] as $question):?>
 			<div class="question-row js-question-row">
