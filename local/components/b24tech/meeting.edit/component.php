@@ -1,4 +1,5 @@
 <?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+
 if (!CModule::IncludeModule("meeting"))
 	return ShowError(GetMessage("ME_MODULE_NOT_INSTALLED"));
 
@@ -324,6 +325,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_REQUEST['save']) && $arResul
 		CMeeting::Update($MEETING_ID, $arFields);
 	}
 
+
 	if ($res)
 	{
 		$arEventParams = null;
@@ -439,9 +441,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_REQUEST['save']) && $arResul
 
 		$arAgenda = $_REQUEST['AGENDA'];
 		$bDeleted = false;
+
 		if (is_array($arAgenda))
 		{
-			$arNewAgendaMap = array();
+            $arNewAgendaMap = array();
 			$arNewAgendaTasks = array();
 
 			if (isset($_REQUEST['AGENDA_TASK']) && CModule::IncludeModule('tasks'))
@@ -630,19 +633,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_REQUEST['save']) && $arResul
 					{
 						$INSTANCE_ID = CMeetingInstance::Add($arFields);
 					}
-					//$arNewAgendaMap[$key] = array($INSTANCE_ID, $arFields['ITEM_ID']);
-					$arNewAgendaMap[$key] = array($INSTANCE_ID, $INSTANCE_ID);
+					$arNewAgendaMap[$key] = array($INSTANCE_ID, $arFields['ITEM_ID']);
 
-					// clear voting result
-					if($MEETING_ID > 0) {
-						// init.php
-						clearVotingResult($MEETING_ID);
-					}
+
+					//удаление результатов голосования в момент проведения и добавления нового проекта решения
+                    if ($arResult['MEETING']['CURRENT_STATE'] == 'A' && $arFields['INSTANCE_PARENT_ID'] > 0) {
+                        clearVotingResult($MEETING_ID, array(
+                            'UF_PARENT_INSTANCE' => $arFields['INSTANCE_PARENT_ID'],
+                            'UF_MEETING_ID' => $arFields['MEETING_ID']
+                        ));
+                    }
 				}
 				else
 				{
 					if ($arFields['TITLE'])
 					{
+                        $arMeetingItem = CMeetingItem::GetList(
+					            array(),
+                                array('ID' => $arFields['ITEM_ID']),
+                                false,
+                                false
+                        )->Fetch();
+
+					    if ($arMeetingItem['TITLE'] != $arFields['TITLE']) {
+					        $arFilter = array(
+                                'UF_PARENT_INSTANCE' => $arFields['INSTANCE_PARENT_ID'] ?: $key,
+                                'UF_MEETING_ID' => $arFields['MEETING_ID'],
+                            );
+					        if ($arFields['INSTANCE_PARENT_ID']) {
+                                $arFilter['UF_ID_INSTANCE'] = $key;
+                            }
+
+                            clearVotingResult($MEETING_ID, $arFilter);
+                        }
+
 						CMeetingItem::Update($arFields['ITEM_ID'], $arFields);
 					}
 

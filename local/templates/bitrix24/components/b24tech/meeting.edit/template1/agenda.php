@@ -903,29 +903,35 @@ endif;
             h += '<span class="meeting-ag-report-lt"></span><span class="meeting-ag-report-rt"></span><span class="meeting-ag-report-lb"></span><span class="meeting-ag-report-rb"></span></span>';
         }
 
-        h += '\
-</div>\
-<div id="js-file-list-wrap-' + data.ID + '"></div>\
-<div class="meeting-comments-wrap" id="agenda_item_comments_' + key + '" style="display: none;"><span onclick="toggleComments(null, this.parentNode);" class="meeting-hide-com meeting-dash-link"><?=CUtil::JSEscape(GetMessage('ME_AGENDA_HIDE_COMMENTS'))?></span><div></div></div></div></div></div>\
-<div class="meeting-ag-block-bottom"><div class="meeting-ag-block-bl"></div><div class="meeting-ag-block-br"></div></div>';
-        <?
+        h += '</div>' +
+            '<div id="js-file-list-wrap-' + data.ID + '"></div>' +
+            '<div class="meeting-comments-wrap" id="agenda_item_comments_' + key + '" style="display: none;">' +
+                '<span onclick="toggleComments(null, this.parentNode);" class="meeting-hide-com meeting-dash-link"><?=CUtil::JSEscape(GetMessage('ME_AGENDA_HIDE_COMMENTS'))?></span>\
+            <div>' +
+            '</div></div></div></div></div><div class="meeting-ag-block-bottom"><div class="meeting-ag-block-bl"></div><div class="meeting-ag-block-br"></div></div>';
 
-
-        if($arResult['CAN_EDIT']):
-        ?>
-//edit buttons data.INSTANCE_PARENT_ID
-        //console.log(data);
-       // if ((data.STATUS || data.STATUS != 'FINISHED') && (currentState !== 'C' && checkAccess !== 'O')) {
-
+                console.log(data);
+        //добавление блока для возможности редактирования вопросов
         if ((currentState === 'P' && checkAccess !== 'M') || (currentState !== 'C' && checkAccess !== 'O')) {
             h += '<div class="meeting-ag-edit-block">' +
-                '<div class="meeting-ag-edit-bl-cont">' +
-                '<div class="meeting-ag-edit-close" onmousedown="BX.PreventDefault(arguments[0])" onclick="deleteRow(\'' + key + '\', BX.findParent(this, window.listItemParams.isItem));" title="<?=CUtil::JSEscape(htmlspecialcharsbx(GetMessage('ME_AGENDA_TT_DELETE')))?>"></div>' +
-                '<div class="meeting-ag-edit-edit" onmousedown="BX.PreventDefault(arguments[0])" onclick="editRow(BX.findParent(this, window.listItemParams.isItem));" title="<?=CUtil::JSEscape(htmlspecialcharsbx(GetMessage('ME_AGENDA_TT_EDIT')))?>"></div></div><div class="meeting-ag-edit-bl-top"></div><div class="meeting-ag-edit-bl-bot"></div></div> <div class="meeting-ag-add-sub-item" title="<?=CUtil::JSEscape(htmlspecialcharsbx(GetMessage('ME_AGENDA_TT_ADDSUB')))?>"><span  onmousedown="BX.PreventDefault(arguments[0])" onclick="plusClick(this)"></span></div><div class="meeting-ag-draggable" title="<?=CUtil::JSEscape(htmlspecialcharsbx(GetMessage('ME_AGENDA_TT_DRAG')))?>"></div><div  onmousedown="BX.PreventDefault(arguments[0])" onclick="shiftRow(this.parentNode)" class="meeting-ag-shift" title="<?=CUtil::JSEscape(htmlspecialcharsbx(GetMessage('ME_AGENDA_TT_SHIFT')))?>"></div>';
+                     '<div class="meeting-ag-edit-bl-cont">' +
+                         '<div class="meeting-ag-edit-close" onmousedown="BX.PreventDefault(arguments[0])" onclick="deleteRow(\'' + key + '\', BX.findParent(this, window.listItemParams.isItem));" title="<?=CUtil::JSEscape(htmlspecialcharsbx(GetMessage('ME_AGENDA_TT_DELETE')))?>"></div>' +
+                         '<div class="meeting-ag-edit-edit" onmousedown="BX.PreventDefault(arguments[0])" onclick="editRow(BX.findParent(this, window.listItemParams.isItem));" title="<?=CUtil::JSEscape(htmlspecialcharsbx(GetMessage('ME_AGENDA_TT_EDIT')))?>"></div>' +
+                     '</div>' +
+                     '<div class="meeting-ag-edit-bl-top"></div>' +
+                     '<div class="meeting-ag-edit-bl-bot"></div>' +
+                 '</div>';
         }
-        <?
-        endif;
-        ?>
+
+        //добавление блока для возможности добавления проектов к вопросам
+        if ((currentState !== 'C' && checkAccess !== 'M') && data.ORIGINAL_TYPE === 'T') {
+            h += '<div class="meeting-ag-add-sub-item" title="<?=CUtil::JSEscape(htmlspecialcharsbx(GetMessage('ME_AGENDA_TT_ADDSUB')))?>">' +
+                     '<span  onmousedown="BX.PreventDefault(arguments[0])" onclick="plusClick(this)"></span>' +
+                 '</div>' +
+                 '<div class="meeting-ag-draggable" title="<?=CUtil::JSEscape(htmlspecialcharsbx(GetMessage('ME_AGENDA_TT_DRAG')))?>"></div>' +
+                 '<div  onmousedown="BX.PreventDefault(arguments[0])" onclick="shiftRow(this.parentNode)" class="meeting-ag-shift" title="<?=CUtil::JSEscape(htmlspecialcharsbx(GetMessage('ME_AGENDA_TT_SHIFT')))?>"></div>';
+        }
+
 
         data.ID = key;
 
