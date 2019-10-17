@@ -732,6 +732,7 @@ if (top.document.forms.meeting_edit)
 		}
 		else
 		{
+
 			LocalRedirect(str_replace('#MEETING_ID#', $MEETING_ID, $arParams["MEETING_URL_TPL"]));
 		}
 	}
