@@ -234,8 +234,6 @@ foreach ($arUsersDocx as $role => $arRoleUsers) {
             $membersCounter++;
             $membersTotalCounter++;
         }
-
-
 	}
 }
 
@@ -267,10 +265,9 @@ if (count($arUsersDocx['R']) > 0) {
 		$table->addCell($columnWidth, $cellStyle)->addText($text, array(), $cellTextStyle);
 		$table->addCell($columnWidth, $cellStyle)->addText($userName, array(), $cellTextStyle);
 
-		if ($key != 'K') {
+		//if ($key != 'K') {
             $membersTotalCounter++;
-        }
-
+       // }
 	}
 
 	$section->addTextBreak();
