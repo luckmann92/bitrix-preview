@@ -923,8 +923,8 @@ endif;
                  '</div>';
         }
 
-        //добавление блока для возможности добавления проектов к вопросам
-        if ((currentState !== 'C' && checkAccess !== 'M') && data.ORIGINAL_TYPE === 'T') {
+        //добавление блока для возможности добавления проектов к вопросам вне повестки
+        if ((currentState === 'A' && checkAccess !== 'M') && data.ORIGINAL_TYPE === 'T' || (currentState === 'P' && checkAccess !== 'M')) {
             h += '<div class="meeting-ag-add-sub-item" title="<?=CUtil::JSEscape(htmlspecialcharsbx(GetMessage('ME_AGENDA_TT_ADDSUB')))?>">' +
                      '<span  onmousedown="BX.PreventDefault(arguments[0])" onclick="plusClick(this)"></span>' +
                  '</div>' +
