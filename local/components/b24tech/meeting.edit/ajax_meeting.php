@@ -115,19 +115,66 @@ if ($MEETING_ID > 0)
 						$arFields['DATE_FINISH'] = '';
 					break;
 				}
-				
-				CMeeting::Update($MEETING_ID, $arFields);
+
+
 				if($arFields['CURRENT_STATE'] == 'C') {
-				    $json = array();
-					$db_list = CIBlockSection::GetList(Array('ID'=>'ASC'), array('IBLOCK_ID' => 30, 'UF_MEETING_ID' => $MEETING_ID));
-					while($ar_result = $db_list->Fetch())
-  					{
-  						$bs = new CIBlockSection;
-  						$res = $bs->Update($ar_result['ID'], array('UF_STATUS' => 'FINISHED'));
+                    $json = array();
+                    $db_list = CIBlockSection::GetList(Array('ID' => 'ASC'), array('IBLOCK_ID' => 30, 'UF_MEETING_ID' => $MEETING_ID));
+                    while ($ar_result = $db_list->Fetch()) {
+                        $bs = new CIBlockSection;
+                        $res = $bs->Update($ar_result['ID'], array('UF_STATUS' => 'FINISHED'));
                         $json[$ar_result['ID']] = $res;
-  					}
-   
-				}
+                    }
+                    if (\Bitrix\Main\Loader::includeModule("bizproc")) {
+                        $documentId = CBPVirtualDocument::CreateDocument(
+                            0,
+                            array(
+                                "IBLOCK_ID" => 31,
+                                "NAME" => "Create Notification",
+                                "CREATED_BY" => "user_".$GLOBALS["USER"]->GetID(),
+                            )
+                        );
+
+                        $arErrorsTmp = array();
+
+                        $wfId = CBPDocument::StartWorkflow(
+                            6935,
+                            array("bizproc", "CBPVirtualDocument", $documentId),
+                            array_merge(array(), array("TargetUser" => "user_".intval($GLOBALS["USER"]->GetID()))),
+                            $arErrorsTmp
+                        );
+                    }
+
+                    var_dump(\BPDocument::GetWorkflowTemplatesForDocumentType(array("iblock", "CIBlockDocument", "iblock_" . 31)));
+
+                    $arUsersID = array_keys(CMeeting::GetUsers($MEETING_ID));
+
+                    if (isset($arUsersID) && is_array($arUsersID)) {
+                        $emails = '';
+                        $to = 'To: ';
+                        $subject = 'Согласовать протокол заседания №' . $MEETING_ID;
+                        $message = 'Просим согласовать протокол по ссылке' . $orderId;
+
+                        foreach ($arUsersID as $k => $userID) {
+                            $arUser = CUser::GetByID($userID)->Fetch();
+                            if ($k != 0 && $k < count($arUsersID)) {
+                                $emails .= ', ';
+                                $to .= ', ';
+                            }
+                            $emails .= $arUser['EMAIL'];
+                            $to .= $arUser['EMAIL'] . ' <' . $arUser['EMAIL'] . '>';
+                        }
+                        $headers = 'MIME-Version: 1.0' . "\r\n";
+                        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                        $headers .= $to. "\r\n";
+                        $headers .= 'From: Bitrix24 <info@' . $_SERVER['HTTP_HOST'] . '>'. "\r\n";
+
+                        mail($emails, $subject, $message, $headers);
+
+                    }
+                }
+				//die();
+                CMeeting::Update($MEETING_ID, $arFields);
 			}
 		}
 

@@ -68,12 +68,12 @@ $strSql = "SELECT
       USERS_REJECTED.COUNT AS USERS_REJECTED_COUNT,
       1 - (USERS_REJECTED.COUNT / USERS.COUNT) AS VISITORS_PERCENTAGE
 FROM
-    sitemanager.b_meeting M
+    b_meeting M
     LEFT OUTER JOIN
      (
        SELECT M.COLLEGIATE,
               count(PLACE) AS EXTERNAL
-       FROM sitemanager.b_meeting M
+       FROM b_meeting M
        WHERE M.CURRENT_STATE = 'C'
          AND M.DATE_FINISH IS NOT NULL
          AND YEAR(M.DATE_FINISH) = ".$arResult['DATE_YEAR']."
@@ -85,7 +85,7 @@ FROM
      (
        SELECT M.COLLEGIATE,
               count(M.PLACE) AS INTERNAL
-       FROM sitemanager.b_meeting M
+       FROM b_meeting M
        WHERE M.CURRENT_STATE = 'C'
          AND M.DATE_FINISH IS NOT NULL
          AND YEAR(M.DATE_FINISH) = ".$arResult['DATE_YEAR']."
@@ -138,6 +138,7 @@ $dbRes = $DB->Query($strSql, false, 'File: '.__FILE__.'<br>Line: '.__LINE__);
 while($result = $dbRes->GetNext()) {
     $arCountByCollegiateAndFrom[$result['COLLEGIATE']] = $result;
 };
+
 //var_dump($arCountByCollegiate);
 $arResult['CountByCollegiateAndFrom'] = $arCountByCollegiateAndFrom;
 

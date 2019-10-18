@@ -103,7 +103,15 @@ class VotingComponent extends CBitrixComponent
 			$this->saveAnswers($this->arParams['USER_ID'], $this->arParams['ANSWERS']);
 			
 			$questions = $this->getVoitingQuestions($this->arParams['SECTION_ID']);
+
 			if($this->isFinishVoting($this->arParams['MEETING_ID'], $this->arParams['SECTION_ID'], $questions)) {
+			    $members = $this->getMembers($this->arParams['MEETING_ID']);
+			    $secretar = $this->getSecretary($this->arParams['MEETING_ID']);
+
+                foreach ($members as $memberID) {
+                    $this->sendNotify($memberID, '');
+			    }
+
 				$this->finishVoting($this->arParams['MEETING_ID'], $this->arParams['SECTION_ID']);
 			}
 		}
@@ -555,13 +563,17 @@ class VotingComponent extends CBitrixComponent
 
 	protected function sendNotify($to, $mess) 
 	{
-		$arMessageFields = array(
-		    "TO_USER_ID" => $to,
-		    //"FROM_USER_ID" => 2,
-		    "NOTIFY_TYPE" => IM_NOTIFY_SYSTEM,
-		    "MESSAGE" => $mess,
-		    //"ATTACH" => Array($attach)
-		);
-		$mess = CIMNotify::Add($arMessageFields);
+        if (CModule::includeModule('im')) {
+            $arMessageFields = array(
+                'TO_USER_ID' => $to,
+                'FROM_USER_ID' => 0,
+                'NOTIFY_TYPE' => IM_NOTIFY_SYSTEM,
+                'NOTIFY_MESSAGE' => $mess,
+                'NOTIFY_MODULE' => 'meeting'
+                //"ATTACH" => Array($attach)
+            );
+            CIMNotify::Add($arMessageFields);
+        }
+
 	}
 }

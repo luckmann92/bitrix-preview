@@ -155,7 +155,7 @@ $ui_filter = [
                 <?$value = $arResult['CountByCollegiateAndFrom'][0];?>
                 ['<?='Совет директоров'?>', <?=$value['VISITORS_PERCENTAGE']?>, '<?=$value['VISITORS_PERCENTAGE'] * 100?>%'],
                 <?$value2 = $arResult['CountByCollegiateAndFrom'][1];
-                $value2['VISITORS_PERCENTAGE'] = 1-$value['VISITORS_PERCENTAGE'];
+                //$value2['VISITORS_PERCENTAGE'] = 1-$value['VISITORS_PERCENTAGE'];
                 ?>
                 ['<?='Комитет'?>', <?=$value2['VISITORS_PERCENTAGE']?>, '<?=$value2['VISITORS_PERCENTAGE'] * 100?>%'],
 

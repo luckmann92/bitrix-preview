@@ -911,9 +911,6 @@ endif;
             <div>' +
             '</div></div></div></div></div><div class="meeting-ag-block-bottom"><div class="meeting-ag-block-bl"></div><div class="meeting-ag-block-br"></div></div>';
 
-                console.log(currentState);
-                console.log(checkAccess);
-
         //добавление блока для возможности редактирования вопросов
         if ((currentState === 'P' && checkAccess !== 'M') || (currentState !== 'C' && checkAccess !== 'O') || (currentState === 'NEW' && checkAccess !== 'M')) {
             h += '<div class="meeting-ag-edit-block">' +
