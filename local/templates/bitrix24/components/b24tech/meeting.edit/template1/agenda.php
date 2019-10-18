@@ -479,7 +479,8 @@ endif;
 ?>
 
 <script type="text/javascript">
-    var checkAccess = '<?=$arResult['ACCESS'];?>';
+    var checkAccess = '<?=$arResult['ACCESS']?>';
+
     //Функция проверяет установлено ли в свойстве элемента значение Y
     //Если установлено, показывает кнопку "Перейти к голосованию"
     function showVotingOffBtn(id_prop) {
@@ -684,7 +685,7 @@ endif;
     endif;
     ?>
     function addRow(data, previousSibling, bReturn) {
-        let currentState = '<?=$arResult['MEETING']['CURRENT_STATE']?>';
+        let currentState = '<?=$arResult['MEETING']['CURRENT_STATE'] ? $arResult['MEETING']['CURRENT_STATE'] : 'NEW'?>';
 
         if (data.INSTANCE_PARENT_ID === '0')
             data.INSTANCE_PARENT_ID = null;
@@ -910,9 +911,11 @@ endif;
             <div>' +
             '</div></div></div></div></div><div class="meeting-ag-block-bottom"><div class="meeting-ag-block-bl"></div><div class="meeting-ag-block-br"></div></div>';
 
+                console.log(currentState);
+                console.log(checkAccess);
 
         //добавление блока для возможности редактирования вопросов
-        if ((currentState === 'P' && checkAccess !== 'M') || (currentState !== 'C' && checkAccess !== 'O')) {
+        if ((currentState === 'P' && checkAccess !== 'M') || (currentState !== 'C' && checkAccess !== 'O') || (currentState === 'NEW' && checkAccess !== 'M')) {
             h += '<div class="meeting-ag-edit-block">' +
                      '<div class="meeting-ag-edit-bl-cont">' +
                          '<div class="meeting-ag-edit-close" onmousedown="BX.PreventDefault(arguments[0])" onclick="deleteRow(\'' + key + '\', BX.findParent(this, window.listItemParams.isItem));" title="<?=CUtil::JSEscape(htmlspecialcharsbx(GetMessage('ME_AGENDA_TT_DELETE')))?>"></div>' +
@@ -924,7 +927,7 @@ endif;
         }
 
         //добавление блока для возможности добавления проектов к вопросам вне повестки
-        if ((currentState === 'A' && checkAccess !== 'M') && data.ORIGINAL_TYPE === 'T' || (currentState === 'P' && checkAccess !== 'M')) {
+        if ((currentState === 'A' && checkAccess !== 'M') && data.ORIGINAL_TYPE === 'T' || (currentState === 'P' && checkAccess !== 'M') || (currentState === 'NEW' && checkAccess !== 'M')) {
             h += '<div class="meeting-ag-add-sub-item" title="<?=CUtil::JSEscape(htmlspecialcharsbx(GetMessage('ME_AGENDA_TT_ADDSUB')))?>">' +
                      '<span  onmousedown="BX.PreventDefault(arguments[0])" onclick="plusClick(this)"></span>' +
                  '</div>' +
