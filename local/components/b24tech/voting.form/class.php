@@ -106,12 +106,13 @@ class VotingComponent extends CBitrixComponent
 
 			if($this->isFinishVoting($this->arParams['MEETING_ID'], $this->arParams['SECTION_ID'], $questions)) {
 			    $members = $this->getMembers($this->arParams['MEETING_ID']);
-			    $secretar = $this->getSecretary($this->arParams['MEETING_ID']);
 
                 foreach ($members as $memberID) {
-                    var_dump($memberID);
-                    die();
-                    $this->sendNotify($memberID, '');
+                    restCommand('im.notify', array(
+                        'to' => $memberID,
+                        'message' => 'Голосование в заседании [url=https://bitrix-preview.tk/timeman/meeting/'.$this->arParams['MEETING_ID'].'/]№' . $this->arParams['MEETING_ID'] . '[/url] закончилось!',
+                        'type' => 'SYSTEM'
+                    ));
 			    }
 
 				$this->finishVoting($this->arParams['MEETING_ID'], $this->arParams['SECTION_ID']);
