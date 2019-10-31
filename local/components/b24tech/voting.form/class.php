@@ -109,6 +109,8 @@ class VotingComponent extends CBitrixComponent
 			    $secretar = $this->getSecretary($this->arParams['MEETING_ID']);
 
                 foreach ($members as $memberID) {
+                    var_dump($memberID);
+                    die();
                     $this->sendNotify($memberID, '');
 			    }
 

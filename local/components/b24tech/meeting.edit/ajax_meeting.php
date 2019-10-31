@@ -145,7 +145,7 @@ if ($MEETING_ID > 0)
                         );
                     }
 
-                    var_dump(\BPDocument::GetWorkflowTemplatesForDocumentType(array("iblock", "CIBlockDocument", "iblock_" . 31)));
+                    //var_dump(\BPDocument::GetWorkflowTemplatesForDocumentType(array("iblock", "CIBlockDocument", "iblock_" . 31)));
 
                     $arUsersID = array_keys(CMeeting::GetUsers($MEETING_ID));
 
