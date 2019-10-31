@@ -25,7 +25,7 @@ if (\Bitrix\Main\Loader::includeModule("bizproc")) {
     $arErrorsTmp = array();
 
     $wfId = CBPDocument::StartWorkflow(
-        6935,
+        9,
         array('lists', 'BizprocDocument', $documentId),
         array(
             'chairman' => array(1,2,3,4,5),
