@@ -367,3 +367,26 @@ function GetEntityDataClass($HlBlockId)
     $entity_data_class = $entity->getDataClass();
     return $entity_data_class;
 }
+
+function restCommand($method, $params)
+{
+    if ($method == null)
+    {
+        return null;
+    }
+
+    $queryUrl = 'https://bitrix-preview.tk/rest/1/3gb60guirn4oxa5m/' . $method;
+    $queryData = http_build_query(array_merge($params));
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_POST => 1,
+        CURLOPT_HEADER => 0,
+        CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_URL => $queryUrl,
+        CURLOPT_POSTFIELDS => $queryData,
+    ));
+    $result = curl_exec($curl);
+    curl_close($curl);
+    $result = json_decode($result, 1);
+    return $result;
+}
