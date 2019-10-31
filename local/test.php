@@ -12,29 +12,7 @@ define('XHR_REQUEST', true);
 
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
 
-if (\Bitrix\Main\Loader::includeModule("bizproc")) {
-    $documentId = CBPVirtualDocument::CreateDocument(
-        0,
-        array(
-            "IBLOCK_ID" => 31,
-            "NAME" => "Create Notification",
-            "CREATED_BY" => "user_".$GLOBALS["USER"]->GetID(),
-        )
-    );
 
-    $arErrorsTmp = array();
-
-    $wfId = CBPDocument::StartWorkflow(
-        9,
-        array('lists', 'BizprocDocument', $documentId),
-        array(
-            'chairman' => array(1,2,3,4,5),
-            'participants' => array(2,3,4,5,6,7),
-            'URLmeeting' => 'https://bitrix-preview.tk/timeman/meeting/297/',
-        ),
-        $arErrorsTmp
-    );
-}
 die();
 $arResult = restCommand('lists.element.add', array(
     'IBLOCK_ID' => 31,
