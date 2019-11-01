@@ -177,6 +177,7 @@ $ui_filter = [
                 vAxis: {
                     format: 'percent',
                 },
+                isStacked: true
             };
 
             chart.draw(data, options);
