@@ -1190,6 +1190,7 @@ BX.namespace('Tasks.Component');
 
 
 var meeting_title = $('[name="ACTION[0][ARGUMENTS][data][UF_MEETING_SUBJECT]"]'),
+	task_type = $('[name="ACTION[0][ARGUMENTS][data][UF_TYPE]"]'),
 	params = window
 	.location
 	.search
@@ -1205,8 +1206,16 @@ var meeting_title = $('[name="ACTION[0][ARGUMENTS][data][UF_MEETING_SUBJECT]"]')
 	),
 	meeting_id = $('[data-item-value="119"]');
 
+if (task_type.length > 0) {
+	task_type.each(function (index, value) {
+		$(this).attr('value', params['type']);
+	});
+}
+
 if (meeting_title.length > 0) {
-	meeting_title.attr('value', params['MEETING_TITLE']);
-	meeting_id.append('<input type="hidden" name="ACTION[0][ARGUMENTS][data][UF_MEETING_ID]" value="' + params['MEETING_ID'] + '">');
+	if (typeof params['MEETING_ID'] !== 'undefined') {
+		meeting_title.attr('value', params['MEETING_TITLE']);
+		meeting_id.append('<input type="hidden" name="ACTION[0][ARGUMENTS][data][UF_MEETING_ID]" value="' + params['MEETING_ID'] + '">');
+	}
 }
 

@@ -390,7 +390,7 @@ endif;
 					{
 						tabId: "popupMenuAdd",
 						text: "<?= GetMessageJS('ME_ADD_TASK_FOR_SECRETAR')?>",
-						href: "/company/personal/user/<?=$userId?>/tasks/task/edit/0/",
+						href: "/company/personal/user/<?=$userId?>/tasks/task/edit/0/?type=30",
 					},
 				];
 				menu = BX.PopupMenu.create(
