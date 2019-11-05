@@ -137,13 +137,14 @@ if ($MEETING_ID > 0)
                         );
 
                         $arErrorsTmp = array();
-                        $arMeeting['USERS'] =  CMeeting::GetUsers($MEETING_ID);
+                        $arMeeting['USERS'] =  array_keys(CMeeting::GetUsers($MEETING_ID));
+
                         $wfId = CBPDocument::StartWorkflow(
                             9,
                             array('lists', 'BizprocDocument', $documentId),
                             array(
-                                'chairman' => array_keys($arMeeting['USERS']),
-                                'participants' => array_keys($arMeeting['USERS']),
+                                'chairman' => $arMeeting['USERS'],
+                                'participants' => $arMeeting['USERS'],
                                 'URLmeeting' => 'https://bitrix-preview.tk/timeman/meeting/'.$MEETING_ID.'/',
                             ),
                             $arErrorsTmp
