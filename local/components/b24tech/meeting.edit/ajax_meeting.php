@@ -133,16 +133,19 @@ if ($MEETING_ID > 0)
                             $arUsers[] = $ID;
                         }
 
+                        $arFields =  array(
+                            "IBLOCK_ID" => 31,
+                            "NAME" => "Повеста заседания №" . $MEETING_ID,
+                            "CREATED_BY" => "user_".$GLOBALS["USER"]->GetID(),
+                            "PROPERTY_CHAIRMAN" => $arUsers[0],
+                            "PROPERTY_PARTICIPANTS" => $arUsers,
+                            "PROPERTY_URL_MEETING" => 'https://bitrix-preview.tk/timeman/meeting/'.$MEETING_ID.'/'
+                        );
+                        var_dump($arFields);
+                        die();
                         $documentId = CBPVirtualDocument::CreateDocument(
                             0,
-                            array(
-                                "IBLOCK_ID" => 31,
-                                "NAME" => "Повеста заседания №" . $MEETING_ID,
-                                "CREATED_BY" => "user_".$GLOBALS["USER"]->GetID(),
-                                "PROPERTY_CHAIRMAN" => $arUsers[0],
-                                "PROPERTY_PARTICIPANTS" => $arUsers,
-                                "PROPERTY_URL_MEETING" => 'https://bitrix-preview.tk/timeman/meeting/'.$MEETING_ID.'/'
-                            )
+                            $arFields
                         );
 
                         unset($arUsers);
