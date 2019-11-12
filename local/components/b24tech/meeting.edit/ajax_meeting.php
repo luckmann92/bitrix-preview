@@ -128,7 +128,9 @@ if ($MEETING_ID > 0)
 
                     if (\Bitrix\Main\Loader::includeModule("bizproc")) {
                         $arMeeting['USERS'] =  array_keys(CMeeting::GetUsers($MEETING_ID));
-
+var_dump($arMeeting['USERS']);
+var_dump($MEETING_ID);
+die();
                         $documentId = CBPVirtualDocument::CreateDocument(
                             0,
                             array(
