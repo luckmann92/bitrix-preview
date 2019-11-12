@@ -147,6 +147,15 @@ if ($MEETING_ID > 0)
                             $arFields
                         );
 
+                        if (\Bitrix\Main\Loader::includeModule("iblock")) {
+                            $rs = new CIBlockElement();
+                            $arElFields = array(
+                                'PROPERTY_VALUES' => array(
+                                    117 => $arUsers
+                                )
+                            );
+                            $rs->Update($documentId, $arElFields);
+                        }
                         unset($arUsers);
 
                         $arErrorsTmp = array();
