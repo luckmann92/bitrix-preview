@@ -138,11 +138,10 @@ if ($MEETING_ID > 0)
                             "NAME" => "Повеста заседания №" . $MEETING_ID,
                             "CREATED_BY" => "user_".$GLOBALS["USER"]->GetID(),
                             "PROPERTY_CHAIRMAN" => $arUsers[0],
-                            "PROPERTY_PARTICIPANTS" => $arUsers,
+                            "PROPERTY_PARTICIPANTS" => implode(',', $arUsers),
                             "PROPERTY_URL_MEETING" => 'https://bitrix-preview.tk/timeman/meeting/'.$MEETING_ID.'/'
                         );
-                        var_dump($arFields);
-                        die();
+
                         $documentId = CBPVirtualDocument::CreateDocument(
                             0,
                             $arFields
