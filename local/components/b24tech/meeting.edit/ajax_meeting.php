@@ -253,6 +253,13 @@ elseif(isset($_REQUEST['PLACE_ID']))
 		echo "{result:'error',error:'wrong_place_id'}";
 	}
 }
-
+if (!function_exists('array_key_first')) {
+    function array_key_first(array $arr) {
+        foreach($arr as $key => $unused) {
+            return $key;
+        }
+        return NULL;
+    }
+}
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/epilog_after.php");
 ?>
