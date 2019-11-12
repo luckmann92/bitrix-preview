@@ -133,7 +133,7 @@ if ($MEETING_ID > 0)
                             $arUsers[] = $ID;
                         }
 
-                        $arFields =  array(
+                        $arDocFields =  array(
                             "IBLOCK_ID" => 31,
                             "NAME" => "Повеста заседания №" . $MEETING_ID,
                             "CREATED_BY" => "user_".$GLOBALS["USER"]->GetID(),
@@ -144,7 +144,7 @@ if ($MEETING_ID > 0)
 
                         $documentId = CBPVirtualDocument::CreateDocument(
                             0,
-                            $arFields
+                            $arDocFields
                         );
 
                         if (\Bitrix\Main\Loader::includeModule("iblock")) {
