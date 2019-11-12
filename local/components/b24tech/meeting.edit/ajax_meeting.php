@@ -127,21 +127,25 @@ if ($MEETING_ID > 0)
                     }
 
                     if (\Bitrix\Main\Loader::includeModule("bizproc")) {
-                        $arMeeting['USERS'] =  array_keys(CMeeting::GetUsers($MEETING_ID));
-var_dump($arMeeting['USERS']);
-var_dump($MEETING_ID);
-die();
+                        $arUsers = array();
+                        $rsUsers = CMeeting::GetUsers($MEETING_ID);
+                        foreach ($rsUsers as $ID => $role) {
+                            $arUsers[] = $ID;
+                        }
+
                         $documentId = CBPVirtualDocument::CreateDocument(
                             0,
                             array(
                                 "IBLOCK_ID" => 31,
                                 "NAME" => "Повеста заседания №" . $MEETING_ID,
                                 "CREATED_BY" => "user_".$GLOBALS["USER"]->GetID(),
-                                "PROPERTY_CHAIRMAN" => $arMeeting['USERS'][array_key_first($arMeeting['USERS'])],
-                                "PROPERTY_PARTICIPANTS" => $arMeeting['USERS'],
+                                "PROPERTY_CHAIRMAN" => $arUsers[0],
+                                "PROPERTY_PARTICIPANTS" => $arUsers,
                                 "PROPERTY_URL_MEETING" => 'https://bitrix-preview.tk/timeman/meeting/'.$MEETING_ID.'/'
                             )
                         );
+
+                        unset($arUsers);
 
                         $arErrorsTmp = array();
 
