@@ -329,7 +329,7 @@ if ($arParams["ENABLE_MENU_TOOLBAR"])
 				"TIMER" => $templateData["TIMER"],
 				"PUBLIC_MODE" => $arParams["PUBLIC_MODE"],
 				"REDIRECT_TO_LIST_ON_DELETE" => $arParams['REDIRECT_TO_LIST_ON_DELETE'],
-				// "TYPE" => $arResult['DATA']['TASK']['UF_TYPE'],
+				"TYPE" => array('UF_TYPE' => $arResult['DATA']['TASK']['UF_TYPE']),
 				// "RESPONSIBLE" => $arResult['DATA']['TASK']['RESPONSIBLE_ID'] == $arParams['USER_ID'],
 			),
 			null,

@@ -60,6 +60,7 @@ $taskData = $arParams["TASK"];
 		$styleShow = '';
 		$styleHide = '';
 		//$arExtStatuses = array(5,7);
+
 		if ($arParams['TASK']['UF_TYPE'] == 30 && $arParams['USER_ID'] == $arParams['TASK']['CREATED_BY'] && $arParams['TASK']['STATUS'] == 5) {
 			$styleShow = ' style="display:inline-block!important;"';
 			$styleHide = ' style="display:none!important;"';
