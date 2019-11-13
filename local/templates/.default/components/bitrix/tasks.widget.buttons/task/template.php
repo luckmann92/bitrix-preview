@@ -95,13 +95,13 @@ $taskData = $arParams["TASK"];
 		</span><?
 		?>
         <?
-        if ($arParams['TASK']['UF_TYPE'] != 30 && $arParams['TASK']['STATUS'] == 5) {
+        if ($arParams['TASK']['UF_TYPE'] != 30 && $arParams['TASK']['STATUS'] == 5 && $arParams['USER_ID'] == $arParams['TASK']['CREATED_BY']) {
             $isShow = true;
         }?>
         <span data-bx-id="task-view-b-button" data-action="APPROVE"  class="task-view-button approve ui-btn ui-btn-success"<?=$isShow ? ' style="display:inline-block!important"' : $styleHide?>>
 			<?=Loc::getMessage("TASKS_APPROVE_TASK")?>
 		</span><?
-        if ($arParams['TASK']['UF_TYPE'] != 30 && $arParams['TASK']['STATUS'] == 5) {
+        if ($arParams['TASK']['UF_TYPE'] != 30 && $arParams['TASK']['STATUS'] == 5 && $arParams['USER_ID'] == $arParams['TASK']['CREATED_BY']) {
             $isShow = true;
         }?>
 		<span data-bx-id="task-view-b-button" data-action="DISAPPROVE" class="task-view-button disapprove ui-btn ui-btn-danger"<?=$isShow ? ' style="display:inline-block!important"' : $styleHide?>>
