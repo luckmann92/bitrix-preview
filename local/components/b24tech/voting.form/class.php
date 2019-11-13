@@ -105,8 +105,6 @@ class VotingComponent extends CBitrixComponent
 			$questions = $this->getVoitingQuestions($this->arParams['SECTION_ID']);
 
 			if($this->isFinishVoting($this->arParams['MEETING_ID'], $this->arParams['SECTION_ID'], $questions)) {
-			    var_dump($this->arParams['MEETING_ID']);
-			    die();
 			    $members = $this->getMembers($this->arParams['MEETING_ID']);
 
                 foreach ($members as $memberID) {
