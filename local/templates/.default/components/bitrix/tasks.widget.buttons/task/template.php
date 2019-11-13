@@ -64,7 +64,7 @@ $taskData = $arParams["TASK"];
 		if ($arParams['TASK']['UF_TYPE'] == 30 && $arParams['USER_ID'] == $arParams['TASK']['CREATED_BY'] && $arParams['TASK']['STATUS'] == 5) {
 			$styleShow = ' style="display:inline-block!important;"';
 			$styleHide = ' style="display:none!important;"';
-		} ?>
+		}?>
 		<span data-bx-id="task-view-b-button" data-action="START_TIMER" class="task-view-button timer-start ui-btn ui-btn-success"<? if ($styleHide) {echo $styleHide;} ?>>
 			<?=Loc::getMessage("TASKS_START_TASK_TIMER")?>
 		</span><?
@@ -78,28 +78,42 @@ $taskData = $arParams["TASK"];
               <?/*data-action="START" */?>
               data-action="COMPLETE"
               class="task-view-button start ui-btn ui-btn-success"<? if ($styleHide) {echo $styleHide;} ?>>
-			<?=Loc::getMessage("TASKS_START_TASK")?>
+            <?if ($arParams['USER_ID'] == $arParams['TASK']['CREATED_BY']) {?>
+                <?if ($arParams['TASK']['UF_TYPE'] == 30 && $arParams['TASK']['STATUS'] == 5) {?>
+                    <?=Loc::getMessage("TASKS_CLOSE_TASK")?>
+                <?} else {?>
+                    Завершить
+                <?}?>
+            <?} else {?>
+                Завершить
+            <?}?>
+
 		</span><?
 
 		?><span data-bx-id="task-view-b-button" data-action="PAUSE" class="task-view-button pause ui-btn ui-btn-success"<? if ($styleHide) {echo $styleHide;} ?>>
 			<?=Loc::getMessage("TASKS_PAUSE_TASK")?>
 		</span><?
-
-		?><span data-bx-id="task-view-b-button" data-action="COMPLETE"  class="task-view-button complete pause ui-btn ui-btn-success"<? if ($styleHide) {echo $styleHide;} ?>>
-			<?=Loc::getMessage("TASKS_CLOSE_TASK")?>
-		</span><?
-
-		?><span data-bx-id="task-view-b-button" data-action="APPROVE"  class="task-view-button approve ui-btn ui-btn-success"<? if ($styleHide) {echo $styleHide;} ?>>
+		?>
+        <?
+        if ($arParams['TASK']['UF_TYPE'] != 30 && $arParams['TASK']['STATUS'] == 5) {
+            $isShow = true;
+        }?>
+        <span data-bx-id="task-view-b-button" data-action="APPROVE"  class="task-view-button approve ui-btn ui-btn-success"<?=$isShow ? ' style="display:inline-block!important"' : $styleHide?>>
 			<?=Loc::getMessage("TASKS_APPROVE_TASK")?>
 		</span><?
-
-		?><span data-bx-id="task-view-b-button" data-action="DISAPPROVE" class="task-view-button disapprove ui-btn ui-btn-danger"<? if ($styleHide) {echo $styleHide;} ?>>
+        if ($arParams['TASK']['UF_TYPE'] != 30 && $arParams['TASK']['STATUS'] == 5) {
+            $isShow = true;
+        }?>
+		<span data-bx-id="task-view-b-button" data-action="DISAPPROVE" class="task-view-button disapprove ui-btn ui-btn-danger"<?=$isShow ? ' style="display:inline-block!important"' : $styleHide?>>
 			<?=Loc::getMessage("TASKS_REDO_TASK")?>
 		</span><?
 		// for approve agenda
-		?><span data-bx-id="task-view-b-button" data-action="APPROVE_AGENDA"  class="task-view-button approve-agenda ui-btn ui-btn-success"<? if ($styleShow) {echo $styleShow;} ?>>
-			<?=Loc::getMessage("TASKS_APPROVE_AGENDA")?>
-		</span><?
+            ?><span data-bx-id="task-view-b-button" data-action="APPROVE_AGENDA"
+                    class="task-view-button approve-agenda ui-btn ui-btn-success"<? if ($styleShow) {
+                echo $styleShow;
+            } ?>>
+            <?= Loc::getMessage("TASKS_APPROVE_AGENDA") ?>
+            </span><?
 		// for reject agenda
 		?><span data-bx-id="task-view-b-button" data-action="REJECT_AGENDA" class="task-view-button reject-agenda ui-btn ui-btn-danger"<? if ($styleShow) {echo $styleShow;} ?>>
 			<?=Loc::getMessage("TASKS_REJECT_AGENDA")?>
