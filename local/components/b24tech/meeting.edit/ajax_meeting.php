@@ -129,6 +129,7 @@ if ($MEETING_ID > 0)
                     if (\Bitrix\Main\Loader::includeModule("bizproc")) {
                         $arUsers = array();
                         $rsUsers = CMeeting::GetUsers($MEETING_ID);
+
                         foreach ($rsUsers as $ID => $role) {
                             $arUsers[] = $ID;
                         }
@@ -151,7 +152,9 @@ if ($MEETING_ID > 0)
                             $rs = new CIBlockElement();
                             $arElFields = array(
                                 'PROPERTY_VALUES' => array(
-                                    117 => $arUsers
+                                    117 => $arUsers,
+                                    116 => $arUsers[0],
+                                    118 => 'https://bitrix-preview.tk/timeman/meeting/'.$MEETING_ID.'/'
                                 )
                             );
                             $rs->Update($documentId, $arElFields);
