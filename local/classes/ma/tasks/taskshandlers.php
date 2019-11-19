@@ -69,7 +69,7 @@ class TasksHandlers {
 					$arResponsibleCustom['ID'] = $_REQUEST['AGENDA_RESPONSIBLE_CUSTOM'][$itemTmpKey];
 				}
 				if (!empty($arResponsibleCustom)) {
-					\CIBlockElement::SetPropertyValues($arElement['ID'], $arElement['IBLOCK_ID'], serialize($arResponsibleCustom), 'AGENDA_RESPONSIBLE');
+					//\CIBlockElement::SetPropertyValues($arElement['ID'], $arElement['IBLOCK_ID'], serialize($arResponsibleCustom), 'AGENDA_RESPONSIBLE');
 				}
 			}
 		}
@@ -93,7 +93,7 @@ class TasksHandlers {
 					$arResponsibleCustom[$itemTmpKey] = $_REQUEST['AGENDA_RESPONSIBLE_CUSTOM'][$itemTmpKey];
 				}
 				if (!empty($arResponsibleCustom)) {
-					\CIBlockElement::SetPropertyValues($arElement['ID'], $arElement['IBLOCK_ID'], serialize($arResponsibleCustom), 'AGENDA_RESPONSIBLE');
+					//\CIBlockElement::SetPropertyValues($arElement['ID'], $arElement['IBLOCK_ID'], serialize($arResponsibleCustom), 'AGENDA_RESPONSIBLE');
 				}
 			}
 		}
