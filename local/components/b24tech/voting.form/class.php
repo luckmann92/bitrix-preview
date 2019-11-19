@@ -104,20 +104,25 @@ class VotingComponent extends CBitrixComponent
 			
 			$questions = $this->getVoitingQuestions($this->arParams['SECTION_ID']);
 
-			$isFinish = false;
+			$isFinish = true;
 
-			if($this->isFinishVoting($this->arParams['MEETING_ID'], $this->arParams['SECTION_ID'], $questions)) {
-			    $members = $this->getMembers($this->arParams['MEETING_ID']);
-var_dump($members);
-die();
+			foreach ($questions as $question) {
+                if(!$this->isFinishVoting($this->arParams['MEETING_ID'], $question['IBLOCK_SECTION_ID'], $questions)) {
+                    $isFinish = false;
+                }
+            }
+
+			if ($isFinish) {
+                $members = $this->getMembers($this->arParams['MEETING_ID']);
                 foreach ($members as $memberID) {
                     restCommand('im.notify', array(
                         'to' => $memberID,
                         'message' => 'Голосование в заседании [url=https://bitrix-preview.tk/timeman/meeting/'.$this->arParams['MEETING_ID'].'/]№' . $this->arParams['MEETING_ID'] . '[/url] закончилось!',
                         'type' => 'SYSTEM'
                     ));
-			    }
-
+                }
+            }
+			if($this->isFinishVoting($this->arParams['MEETING_ID'], $this->arParams['SECTION_ID'], $questions)) {
 				$this->finishVoting($this->arParams['MEETING_ID'], $this->arParams['SECTION_ID']);
 			}
 		}
