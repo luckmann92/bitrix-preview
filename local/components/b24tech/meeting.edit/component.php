@@ -664,7 +664,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_REQUEST['save']) && $arResul
                                 $arFilter['UF_ID_INSTANCE'] = $key;
                             }
 
-                            //clearVotingResult($MEETING_ID, $arFilter);
+                            clearVotingResult($MEETING_ID, $arFilter);
                         }
 
 						CMeetingItem::Update($arFields['ITEM_ID'], $arFields);
