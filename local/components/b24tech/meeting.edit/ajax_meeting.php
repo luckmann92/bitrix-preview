@@ -136,7 +136,7 @@ if ($MEETING_ID > 0)
 
                         $arDocFields =  array(
                             "IBLOCK_ID" => 31,
-                            "NAME" => "Повеста заседания №" . $MEETING_ID,
+                            "NAME" => "Протокол заседания №" . $MEETING_ID,
                             "CREATED_BY" => "user_".$GLOBALS["USER"]->GetID(),
                             "PROPERTY_CHAIRMAN" => $arUsers[0],
                             "PROPERTY_PARTICIPANTS" => implode(',', $arUsers),

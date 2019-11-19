@@ -418,7 +418,9 @@ $APPLICATION->IncludeComponent('bitrix:fileman.light_editor', '', array(
 	'WIDTH' => '100%',
 ));
 ?> 
-<?if($arResult['MEETING']['ID'] > 0):?>
+<?
+
+if($arResult['MEETING']['ID'] > 0):?>
 	<?
 	$APPLICATION->IncludeComponent(
 		'b24tech:disk.folder.file.list',

@@ -65,12 +65,13 @@ $LHE->Show(array(
 ?>
 	</div>
 	<div id="meeting-detail-files" class="meeting-detail-files meeting-detail-files-edit">
+
 		<?
 		$APPLICATION->IncludeComponent(
 			'b24tech:disk.folder.file.list',
 			'upload',
 			array(
-				'QUESTION_ID' => $arResult['ITEM']['INSTANCES'][0]['ID'],
+				'QUESTION_ID' => $arResult['ITEM']['ID'],
 				'TYPE' => 'question',
 			),
 			false,

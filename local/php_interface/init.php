@@ -164,7 +164,7 @@ class MeetingHendlers
     {
         $section = self::getSectionQuestion($arFields);
         if ($section['ID'] > 0) {
-            dump(self::addAnswerFromIblock($arFields, $section['ID']));
+            self::addAnswerFromIblock($arFields, $section['ID']);
         }
 
         global $USER;
