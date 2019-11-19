@@ -638,10 +638,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_REQUEST['save']) && $arResul
 
 					//удаление результатов голосования в момент проведения и добавления нового проекта решения
                     if ($arResult['MEETING']['CURRENT_STATE'] == 'A' && $arFields['INSTANCE_PARENT_ID'] > 0) {
-                        clearVotingResult($MEETING_ID, array(
+                        /*clearVotingResult($MEETING_ID, array(
                             'UF_PARENT_INSTANCE' => $arFields['INSTANCE_PARENT_ID'],
                             'UF_MEETING_ID' => $arFields['MEETING_ID']
-                        ));
+                        ));*/
                     }
 				}
 				else
