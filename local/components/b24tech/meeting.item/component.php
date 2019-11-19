@@ -191,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && $_REQUEST['save_item'] && check_bitr
 	// clear voting result
 	if($arResult['ITEM']['INSTANCES'][0]['ID'] > 0) {
 		// init.php
-		clearVotingResult($arResult['ITEM']['INSTANCES'][0]['MEETING_ID']);
+		//clearVotingResult($arResult['ITEM']['INSTANCES'][0]['MEETING_ID']);
 	}
 }
 
