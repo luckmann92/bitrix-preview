@@ -61,10 +61,13 @@ $taskData = $arParams["TASK"];
 		$styleHide = '';
 		//$arExtStatuses = array(5,7);
 
+        $isTypeTask = false;
 		if ($arParams['TASK']['UF_TYPE'] == 30 && $arParams['USER_ID'] == $arParams['TASK']['CREATED_BY'] && $arParams['TASK']['STATUS'] == 5) {
 			$styleShow = ' style="display:inline-block!important;"';
 			$styleHide = ' style="display:none!important;"';
-		}?>
+			$isTypeTask = true;
+		}
+		?>
 		<span data-bx-id="task-view-b-button" data-action="START_TIMER" class="task-view-button timer-start ui-btn ui-btn-success"<? if ($styleHide) {echo $styleHide;} ?>>
 			<?=Loc::getMessage("TASKS_START_TASK_TIMER")?>
 		</span><?
@@ -77,6 +80,7 @@ $taskData = $arParams["TASK"];
         <span data-bx-id="task-view-b-button"
               <?/*data-action="START" */?>
               data-action="COMPLETE"
+              <?=!$isTypeTask ? ' style="display:inline-block" ' : ''?>
               class="task-view-button start ui-btn ui-btn-success"<? if ($styleHide) {echo $styleHide;} ?>>
             <?if ($arParams['USER_ID'] == $arParams['TASK']['CREATED_BY']) {?>
                 <?if ($arParams['TASK']['UF_TYPE'] == 30 && $arParams['TASK']['STATUS'] == 5) {?>
