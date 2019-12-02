@@ -80,7 +80,7 @@ $taskData = $arParams["TASK"];
         <span data-bx-id="task-view-b-button"
               <?/*data-action="START" */?>
               data-action="COMPLETE"
-              <?=!$isTypeTask ? ' style="display:inline-block" ' : ''?>
+              <?=!$isTypeTask ? ' style="display:inline-block!important" ' : ''?>
               class="task-view-button start ui-btn ui-btn-success"<? if ($styleHide) {echo $styleHide;} ?>>
             <?if ($arParams['USER_ID'] == $arParams['TASK']['CREATED_BY']) {?>
                 <?if ($arParams['TASK']['UF_TYPE'] == 30 && $arParams['TASK']['STATUS'] == 5) {?>
