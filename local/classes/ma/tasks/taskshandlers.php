@@ -55,11 +55,26 @@ class TasksHandlers {
 	 * @param $arFields array - meeting instance fields
 	 */
 	public static function onAfterMeetingInstanceAddHandler ($arFields) {
-		if ($arFields['MEETING_ID'] > 0 && $arFields['ID'] > 0 && $arFields['TITLE'] && !empty($_REQUEST['AGENDA_RESPONSIBLE_CUSTOM'])) {
+		if (
+		    $arFields['MEETING_ID'] > 0 && $arFields['ID'] > 0 && $arFields['TITLE']
+            &&
+            !empty($_REQUEST['AGENDA_RESPONSIBLE_CUSTOM'])
+        )
+		{
 			$itemTmpKey = array_search($arFields['TITLE'], $_REQUEST['AGENDA_TITLE']);
 			if (strlen($_REQUEST['AGENDA_RESPONSIBLE_CUSTOM'][$itemTmpKey]) > 0) {
 				Loader::includeModule('iblock');
-				$res = \CIBlockElement::GetList(array(), array('PROPERTY_MEETING_ID' => $arFields['MEETING_ID'], 'IBLOCK_ID' => 29), false, false, array('ID', 'IBLOCK_ID', 'PROPERTY_AGENDA_RESPONSIBLE'));
+				$res = \CIBlockElement::GetList(
+				    array(),
+                    array(
+                        'PROPERTY_MEETING_ID' => $arFields['MEETING_ID'],
+                        'IBLOCK_ID' => 29
+                    ),
+                    false, false,
+                    array(
+                        'ID', 'IBLOCK_ID', 'PROPERTY_AGENDA_RESPONSIBLE'
+                    )
+                );
 				$arElement = $res->fetch();
 				if ($arElement['PROPERTY_AGENDA_RESPONSIBLE_VALUE']['TEXT']) {
 					$arResponsibleCustom = unserialize($arElement['PROPERTY_AGENDA_RESPONSIBLE_VALUE']['TEXT']);

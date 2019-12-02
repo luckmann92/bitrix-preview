@@ -42,7 +42,6 @@ class VotingComponent extends CBitrixComponent
 				return;
 			}*/
 
-
 			if($userRole == 'O' && $voting['UF_STATUS'] == 'AGREEMENT') {
 				$this->includeComponentTemplate('agreement');
 				return;
@@ -68,9 +67,11 @@ class VotingComponent extends CBitrixComponent
 				}
 			}
 
+
 			if( ($voting['UF_STATUS'] == 'IN_PROCESS' || $voting['UF_STATUS'] == 'FINISHED') && ($userRole == 'K' || $userRole == 'O') && $voting['UF_TYPE'] == 'offline') {
 				$questions = $this->getVoitingQuestions($voting["ID"]);
 				$questions = $this->detectUnansweredQuestions($userId, $voting["ID"], $questions);
+
 
 				if(count($questions) > 0) {
 					if($this->arParams["IS_QUESTION"] == "Y")
@@ -100,6 +101,7 @@ class VotingComponent extends CBitrixComponent
 		}
 
 		if($this->arParams['ACTION'] == 'save') {
+
 			$this->saveAnswers($this->arParams['USER_ID'], $this->arParams['ANSWERS']);
 			
 			$questions = $this->getVoitingQuestions($this->arParams['SECTION_ID']);

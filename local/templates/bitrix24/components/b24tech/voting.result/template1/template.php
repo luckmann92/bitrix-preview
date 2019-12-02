@@ -123,12 +123,14 @@ if ('C' != $arResult['MEETING_CURRENT_STATE'] &&
                                         <img src="/upload/voting-icons/a.png" class="answer-icon">
                                     <?endif;?>
                                 <?else:?>
-                                    <?$APPLICATION->IncludeComponent(
+                                    <?
+                                    $APPLICATION->IncludeComponent(
                                         "b24tech:voting.form", "template2", array(
                                             "INSTANCE_ID" => $instance["ID"],
                                             "MEETING_ID" => $instance["MEETING_ID"],
                                             "INSTANCE_PARENT_ID" => $instance["INSTANCE_PARENT_ID"],
                                             "IS_QUESTION" => 'Y',
+                                            'IS_RESULT' => 'N',
                                             "USER_ID" => $id,
                                         )
                                     );?>

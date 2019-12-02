@@ -22,7 +22,7 @@ $answers = array(
 	array('TITLE'=> 'Воздержался', 'VALUE' => 'A'),
 );
 
-?> 
+?>
 <?if(!empty($arResult['QUESTIONS'])):?>
 	<? $rand = rand(); ?>
 	<div id="js-voting-<?=$rand?>" class="form-questions">
